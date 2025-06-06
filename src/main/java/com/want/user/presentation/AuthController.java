@@ -2,10 +2,14 @@ package com.want.user.presentation;
 
 
 import com.want.common.response.ApiResponse;
-import com.want.user.application.dto.request.SignupRequest;
-import com.want.user.application.dto.response.SignupResponse;
+import com.want.user.application.dto.auth.request.SignInRequest;
+import com.want.user.application.dto.auth.request.SignupRequest;
+import com.want.user.application.dto.auth.response.SignInResponse;
+import com.want.user.application.dto.auth.response.SignInResult;
+import com.want.user.application.dto.auth.response.SignupResponse;
 import com.want.user.application.service.AuthService;
 import com.want.user.domain.auth.AuthSuccessCode;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -34,6 +38,23 @@ public class AuthController {
             AuthSuccessCode.USER_SIGNUP_SUCCESS.getCode(),
             AuthSuccessCode.USER_SIGNUP_SUCCESS.getMessage(),
             response
+        ));
+  }
+
+  @PostMapping("/sign-in")
+  public ResponseEntity<ApiResponse<SignInResponse>> signIn(
+      @RequestBody @Valid SignInRequest request,
+      HttpServletResponse httpServletResponse
+  ) {
+    SignInResult result = authService.signIn(request);
+    httpServletResponse.addHeader("Set-Cookie", result.cookie().toString());
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+            AuthSuccessCode.USER_LOGIN_SUCCESS.getCode(),
+            AuthSuccessCode.USER_LOGIN_SUCCESS.getMessage(),
+            result.response()
         ));
   }
 }

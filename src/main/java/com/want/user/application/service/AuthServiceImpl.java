@@ -2,14 +2,22 @@ package com.want.user.application.service;
 
 
 import com.want.common.exception.CustomException;
-import com.want.user.application.dto.request.SignupRequest;
-import com.want.user.application.dto.response.SignupResponse;
+import com.want.common.infrastructure.jwt.JwtProvider;
+import com.want.common.infrastructure.redis.RedisService;
+import com.want.user.application.dto.auth.request.SignInRequest;
+import com.want.user.application.dto.auth.request.SignupRequest;
+import com.want.user.application.dto.auth.response.SignInResult;
+import com.want.user.application.dto.auth.response.SignupResponse;
 import com.want.user.domain.auth.AuthErrorCode;
 import com.want.user.domain.repository.UserRepository;
 import com.want.user.domain.user.User;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -17,6 +25,8 @@ public class AuthServiceImpl implements AuthService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final JwtProvider jwtProvider;
+  private final RedisService redisService;
 
   private User findUserByEmail(String email) {
     return userRepository.findUserByEmail(email)
@@ -40,6 +50,13 @@ public class AuthServiceImpl implements AuthService {
     }
   }
 
+  private void validatePassword(String rawPassword, String encodedPassword) {
+    if (!passwordEncoder.matches(rawPassword, encodedPassword)) {
+      throw new CustomException(AuthErrorCode.INVALID_SIGN_IN);
+    }
+  }
+
+  @Transactional
   @Override
   public SignupResponse signup(SignupRequest request) {
     existsUserByEmail(request.email());
@@ -50,11 +67,40 @@ public class AuthServiceImpl implements AuthService {
         .password(passwordEncoder.encode(request.password()))
         .name(request.name())
         .phone(request.phone())
-        .profileImage(request.profileImageUrl())
+        .profileImage(request.profileImage())
         .build();
 
     userRepository.save(buildUser);
 
     return SignupResponse.from(buildUser);
   }
+
+  @Transactional
+  @Override
+  public SignInResult signIn(SignInRequest request) {
+    User userByEmail = findUserByEmail(request.email());
+    validatePassword(request.password(), userByEmail.getPassword());
+
+    String accessToken = jwtProvider.createAccessToken(userByEmail);
+    String refreshToken = jwtProvider.createRefreshToken(userByEmail);
+
+    redisService.set("RT:" + userByEmail.getId(),
+        refreshToken,
+        jwtProvider.getRefreshTokenExpire(),
+        TimeUnit.MILLISECONDS
+    );
+
+    ResponseCookie cookie = ResponseCookie
+        .from("RT", userByEmail.getId().toString())
+        .httpOnly(true)
+        .secure(true)
+        .sameSite("Strict")
+        .path("/")
+        .maxAge(Duration.ofMillis(jwtProvider.getRefreshTokenExpire()))
+        .build();
+
+    return SignInResult.of(userByEmail, accessToken, cookie);
+  }
+
+
 }
