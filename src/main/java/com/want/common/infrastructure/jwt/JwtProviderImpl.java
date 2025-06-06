@@ -8,7 +8,7 @@ import static com.want.user.domain.auth.AuthErrorCode.TOKEN_EXPIRED;
 import static com.want.user.domain.auth.AuthErrorCode.TOKEN_TOO_EARLY;
 
 import com.want.common.exception.CustomException;
-import com.want.user.domain.user.Role;
+import com.want.user.domain.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -38,10 +38,10 @@ public class JwtProviderImpl implements JwtProvider {
   @Value("${spring.application.name}")
   private String issuer;
 
-  @Value("${jwt.access.expire}")
+  @Value("${jwt.access.expiration}")
   private long accessTokenExpire;
 
-  @Value("${jwt.refresh.expire}")
+  @Value("${jwt.refresh.expiration}")
   private long refreshTokenExpire;
 
   private static final String PREFIX_BEARER = "Bearer ";
@@ -58,11 +58,12 @@ public class JwtProviderImpl implements JwtProvider {
 
 
   @Override
-  public String createAccessToken(Long userId, Role role) {
+  public String createAccessToken(User user) {
     return Jwts.builder()
         .id(UUID.randomUUID().toString())
-        .subject(userId.toString())
-        .claim("USER_ROLE", role)
+        .subject(user.getId().toString())
+        .claim("USER_ROLE", user.getRole())
+        .claim("email", user.getEmail())
         .issuer(issuer)
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + accessTokenExpire))
@@ -71,10 +72,10 @@ public class JwtProviderImpl implements JwtProvider {
   }
 
   @Override
-  public String createRefreshToken(Long userId) {
+  public String createRefreshToken(User user) {
     return Jwts.builder()
         .id(UUID.randomUUID().toString())
-        .subject(userId.toString())
+        .subject(user.getId().toString())
         .issuer(issuer)
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + refreshTokenExpire))
@@ -101,8 +102,8 @@ public class JwtProviderImpl implements JwtProvider {
   }
 
   @Override
-  public String getEmail(String bearerToken) { // TODO: 이메일 파싱으로 수정 필요.
-    return extractClaims(bearerToken).getSubject();
+  public String getEmail(String bearerToken) {
+    return extractClaims(bearerToken).get("email", String.class);
   }
 
   @Override
