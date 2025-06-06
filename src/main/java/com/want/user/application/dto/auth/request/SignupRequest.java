@@ -32,6 +32,6 @@ public record SignupRequest(
     )
     String phone,
 
-    String profileImageUrl
+    String profileImage
 ) {
 }
