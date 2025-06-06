@@ -12,10 +12,10 @@ services:
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:
-      - web-network
+      - want-network
 
 volumes:
   postgres:
 
 networks:
-  web-network:
+  want-network:
