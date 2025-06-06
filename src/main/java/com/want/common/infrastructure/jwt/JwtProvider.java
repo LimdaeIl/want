@@ -1,7 +1,6 @@
 package com.want.common.infrastructure.jwt;
 
 
-import com.want.user.domain.user.Role;
 import com.want.user.domain.user.User;
 
 public interface JwtProvider {
@@ -18,8 +17,6 @@ public interface JwtProvider {
   Long getUserIdByToken(String bearerToken);
 
   Long getUserId(String bearerToken);
-
-  String getEmail(String bearerToken);
-
+  
   String getRole(String bearerToken);
 }

@@ -18,7 +18,6 @@ import io.jsonwebtoken.PrematureJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import java.security.Key;
 import java.util.Date;
 import java.util.UUID;
 import javax.crypto.SecretKey;
@@ -31,8 +30,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtProviderImpl implements JwtProvider {
 
-  private final Key accessKey;
-  private final Key refreshKey;
   private final SecretKey secretKey;
 
   @Value("${spring.application.name}")
@@ -46,14 +43,9 @@ public class JwtProviderImpl implements JwtProvider {
 
   private static final String PREFIX_BEARER = "Bearer ";
 
-  public JwtProviderImpl(
-      @Value("${jwt.access.secret}") String accessSecret,
-      @Value("${jwt.refresh.secret}") String refreshSecret) {
-    byte[] accessKeyBytes = Decoders.BASE64.decode(accessSecret);
-    byte[] refreshKeyBytes = Decoders.BASE64.decode(refreshSecret);
-    this.accessKey = Keys.hmacShaKeyFor(accessKeyBytes);
-    this.refreshKey = Keys.hmacShaKeyFor(refreshKeyBytes);
-    this.secretKey = this.getSecretKey();
+  public JwtProviderImpl(@Value("${jwt.secret}") String base64Secret) {
+    byte[] keyBytes = Decoders.BASE64.decode(base64Secret);
+    this.secretKey = Keys.hmacShaKeyFor(keyBytes);
   }
 
 
@@ -63,7 +55,6 @@ public class JwtProviderImpl implements JwtProvider {
         .id(UUID.randomUUID().toString())
         .subject(user.getId().toString())
         .claim("USER_ROLE", user.getRole())
-        .claim("email", user.getEmail())
         .issuer(issuer)
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + accessTokenExpire))
@@ -99,11 +90,6 @@ public class JwtProviderImpl implements JwtProvider {
   @Override
   public Long getUserId(String bearerToken) {
     return extractClaims(bearerToken).get("userId", Long.class);
-  }
-
-  @Override
-  public String getEmail(String bearerToken) {
-    return extractClaims(bearerToken).get("email", String.class);
   }
 
   @Override

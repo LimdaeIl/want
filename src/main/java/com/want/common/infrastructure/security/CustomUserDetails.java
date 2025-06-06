@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Slf4j(topic = "CustomUserDetails")
 public record CustomUserDetails(
     Long id,
-    String email,
     Role role
 ) implements UserDetails {
 
@@ -27,7 +26,7 @@ public record CustomUserDetails(
 
   @Override
   public String getUsername() {
-    return email;
+    return String.valueOf(id);
   }
 
   @Override

@@ -1,14 +1,19 @@
 package com.want.user.domain.user;
 
 import com.want.common.audit.BaseEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,13 +33,17 @@ public class User extends BaseEntity {
   @Column(name = "id", nullable = false, unique = true, updatable = false)
   private Long id;
 
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
+      cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  private List<UserSignInHistory> signInHistories = new ArrayList<>();
+
   @Column(name = "email", nullable = false, unique = true)
   private String email;
 
   @Column(name = "password", nullable = false)
   private String password;
 
-  @Column(name = "name", nullable = true)
+  @Column(name = "name")
   private String name;
 
   @Column(name = "phone", nullable = false, unique = true)
@@ -47,4 +56,11 @@ public class User extends BaseEntity {
   @Enumerated(EnumType.STRING)
   @Column(name = "role", nullable = false)
   private Role role = Role.ROLE_CUSTOMER;
+
+  public void addSignInHistory(UserSignInHistory history) {
+    if (!signInHistories.contains(history)) {
+      signInHistories.add(history);
+      history.setUser(this);
+    }
+  }
 }

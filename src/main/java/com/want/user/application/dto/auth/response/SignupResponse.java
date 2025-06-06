@@ -1,4 +1,4 @@
-package com.want.user.application.dto.response;
+package com.want.user.application.dto.auth.response;
 
 import com.want.user.domain.user.Role;
 import com.want.user.domain.user.User;

@@ -30,11 +30,10 @@ spring:
 ---
 
 jwt:
+  secret: ${JWT_SECRET}
   access:
-    secret: ${JWT_SECRET}
     expiration: ${JWT_ACCESS_EXPIRE}
   refresh:
-    secret: ${JWT_SECRET}
     expiration: ${JWT_REFRESH_EXPIRE}
 
 ---

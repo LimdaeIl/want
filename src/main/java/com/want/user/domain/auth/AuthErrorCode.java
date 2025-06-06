@@ -23,7 +23,7 @@ public enum AuthErrorCode implements ErrorCode {
   USER_NOT_FOUND_BY_ID(HttpStatus.NOT_FOUND.value(), "존재하지 않는 회원 ID 입니다.", HttpStatus.NOT_FOUND),
 
   // 로그인 관련
-  INVALID_LOGIN(HttpStatus.BAD_REQUEST.value(), "아이디 또는 비밀번호가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
+  INVALID_SIGN_IN(HttpStatus.BAD_REQUEST.value(), "아이디 또는 비밀번호가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
   INVALID_PASSWORD(HttpStatus.BAD_REQUEST.value(), "비밀번호가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
 
   // 토큰 관련

@@ -30,12 +30,12 @@ public abstract class BaseEntity {
   protected Long createdBy;
 
   @LastModifiedDate
-  @Column(name = "modified_at")
-  protected LocalDateTime modifiedAt;
+  @Column(name = "updated_at")
+  protected LocalDateTime updatedAt;
 
   @LastModifiedBy
-  @Column(name = "modified_by")
-  protected Long modifiedBy;
+  @Column(name = "updated_by")
+  protected Long updatedBy;
 
   @Column(name = "deleted_at")
   protected LocalDateTime deletedAt;
