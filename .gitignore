@@ -3,6 +3,7 @@
 
 ### dotenv ###
 .env
+*.env.json
 
 ### Eclipse ###
 .metadata

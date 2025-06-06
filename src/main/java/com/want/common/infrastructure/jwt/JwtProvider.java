@@ -2,11 +2,12 @@ package com.want.common.infrastructure.jwt;
 
 
 import com.want.user.domain.user.Role;
+import com.want.user.domain.user.User;
 
 public interface JwtProvider {
-  String createAccessToken(Long userId, Role role);
+  String createAccessToken(User user);
 
-  String createRefreshToken(Long userId);
+  String createRefreshToken(User user);
 
   long getRefreshTokenExpire();
 
