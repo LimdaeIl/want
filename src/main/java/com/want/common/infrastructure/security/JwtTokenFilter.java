@@ -31,7 +31,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
   private final JwtProvider jwtProvider;
   private final ObjectMapper objectMapper;
 
-
   @Override
   protected void doFilterInternal(HttpServletRequest request,
                                   @NotNull HttpServletResponse response,
@@ -45,11 +44,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     try {
       Long userId = jwtProvider.getUserId(bearerToken);
-      String email = jwtProvider.getEmail(bearerToken);
       String role = jwtProvider.getRole(bearerToken);
 
       List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
-      CustomUserDetails userDetails = new CustomUserDetails(userId, email, Role.valueOf(role));
+      CustomUserDetails userDetails = new CustomUserDetails(userId, Role.valueOf(role));
 
       Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, bearerToken, authorities);
       SecurityContextHolder.getContext().setAuthentication(authentication);
