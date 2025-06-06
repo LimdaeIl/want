@@ -29,7 +29,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
   private final JwtProvider jwtProvider;
-  private static final ObjectMapper mapper = new ObjectMapper();
+  private final ObjectMapper objectMapper;
 
 
   @Override
@@ -61,7 +61,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
       response.setContentType("application/json");
       response.getWriter().write(
-          mapper.writeValueAsString(new ErrorResponse(AuthErrorCode.INVALID_BEARER_TOKEN))
+          objectMapper.writeValueAsString(new ErrorResponse(AuthErrorCode.INVALID_BEARER_TOKEN))
       );
       SecurityContextHolder.clearContext();
 
