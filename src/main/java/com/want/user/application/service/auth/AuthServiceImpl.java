@@ -1,4 +1,4 @@
-package com.want.user.application.service;
+package com.want.user.application.service.auth;
 
 
 import com.want.common.exception.CustomException;
@@ -91,7 +91,7 @@ public class AuthServiceImpl implements AuthService {
     );
 
     ResponseCookie cookie = ResponseCookie
-        .from("RT", userByEmail.getId().toString())
+        .from("RT", refreshToken)
         .httpOnly(true)
         .secure(true)
         .sameSite("Strict")

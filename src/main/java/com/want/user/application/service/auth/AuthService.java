@@ -1,4 +1,4 @@
-package com.want.user.application.service;
+package com.want.user.application.service.auth;
 
 import com.want.user.application.dto.auth.request.SignInRequest;
 import com.want.user.application.dto.auth.request.SignupRequest;
