@@ -1,6 +1,6 @@
+@env=dev
 
 ### 회원가입
-@env=dev
 POST http://localhost:{{SERVER_PORT}}/api/v1/auth/signup
 Content-Type: application/json
 
@@ -10,4 +10,14 @@ Content-Type: application/json
   "name": "test",
   "phone": "01012341234",
   "profileImageUrl": "test.jpg"
+}
+
+
+### 로그인
+POST http://localhost:{{SERVER_PORT}}/api/v1/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "test1234!"
 }
