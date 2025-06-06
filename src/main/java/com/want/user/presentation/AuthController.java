@@ -7,9 +7,8 @@ import com.want.user.application.dto.auth.request.SignupRequest;
 import com.want.user.application.dto.auth.response.SignInResponse;
 import com.want.user.application.dto.auth.response.SignInResult;
 import com.want.user.application.dto.auth.response.SignupResponse;
-import com.want.user.application.service.AuthService;
+import com.want.user.application.service.auth.AuthService;
 import com.want.user.domain.auth.AuthSuccessCode;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -43,14 +42,12 @@ public class AuthController {
 
   @PostMapping("/sign-in")
   public ResponseEntity<ApiResponse<SignInResponse>> signIn(
-      @RequestBody @Valid SignInRequest request,
-      HttpServletResponse httpServletResponse
-  ) {
+      @RequestBody @Valid SignInRequest request) {
     SignInResult result = authService.signIn(request);
-    httpServletResponse.addHeader("Set-Cookie", result.cookie().toString());
 
     return ResponseEntity
         .status(HttpStatus.OK)
+        .header("Set-Cookie", result.cookie().toString())
         .body(new ApiResponse<>(
             AuthSuccessCode.USER_LOGIN_SUCCESS.getCode(),
             AuthSuccessCode.USER_LOGIN_SUCCESS.getMessage(),

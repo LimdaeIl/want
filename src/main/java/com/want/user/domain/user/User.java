@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -34,7 +35,7 @@ public class User extends BaseEntity {
 
   @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
       cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-  private List<UserSignInHistory> signInHistories;
+  private List<UserSignInHistory> signInHistories = new ArrayList<>();
 
   @Column(name = "email", nullable = false, unique = true)
   private String email;
@@ -57,7 +58,9 @@ public class User extends BaseEntity {
   private Role role = Role.ROLE_CUSTOMER;
 
   public void addSignInHistory(UserSignInHistory history) {
-    signInHistories.add(history);
-    history.setUser(this);
+    if (!signInHistories.contains(history)) {
+      signInHistories.add(history);
+      history.setUser(this);
+    }
   }
 }
