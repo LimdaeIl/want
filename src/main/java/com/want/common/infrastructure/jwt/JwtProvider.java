@@ -6,7 +6,7 @@ import com.want.user.domain.user.Role;
 public interface JwtProvider {
   String createAccessToken(Long userId, Role role);
 
-  String refreshAccessToken(Long userId);
+  String createRefreshToken(Long userId);
 
   long getRefreshTokenExpire();
 

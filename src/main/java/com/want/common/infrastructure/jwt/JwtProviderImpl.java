@@ -46,11 +46,14 @@ public class JwtProviderImpl implements JwtProvider {
 
   private static final String PREFIX_BEARER = "Bearer ";
 
-  public JwtProviderImpl(@Value("${jwt.secret}") String secretKey) {
-    byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-    this.accessKey = Keys.hmacShaKeyFor(keyBytes);
-    this.refreshKey = Keys.hmacShaKeyFor(keyBytes);
-    this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+  public JwtProviderImpl(
+      @Value("${jwt.access.secret}") String accessSecret,
+      @Value("${jwt.refresh.secret}") String refreshSecret) {
+    byte[] accessKeyBytes = Decoders.BASE64.decode(accessSecret);
+    byte[] refreshKeyBytes = Decoders.BASE64.decode(refreshSecret);
+    this.accessKey = Keys.hmacShaKeyFor(accessKeyBytes);
+    this.refreshKey = Keys.hmacShaKeyFor(refreshKeyBytes);
+    this.secretKey = this.getSecretKey();
   }
 
 
@@ -68,7 +71,7 @@ public class JwtProviderImpl implements JwtProvider {
   }
 
   @Override
-  public String refreshAccessToken(Long userId) {
+  public String createRefreshToken(Long userId) {
     return Jwts.builder()
         .id(UUID.randomUUID().toString())
         .subject(userId.toString())
@@ -98,7 +101,7 @@ public class JwtProviderImpl implements JwtProvider {
   }
 
   @Override
-  public String getEmail(String bearerToken) {
+  public String getEmail(String bearerToken) { // TODO: 이메일 파싱으로 수정 필요.
     return extractClaims(bearerToken).getSubject();
   }
 
