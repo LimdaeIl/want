@@ -3,6 +3,7 @@ package com.want.common.infrastructure.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.want.common.exception.ErrorResponse;
 import com.want.common.infrastructure.jwt.JwtProvider;
+import com.want.common.infrastructure.redis.RedisService;
 import com.want.user.domain.auth.AuthErrorCode;
 import com.want.user.domain.user.Role;
 import jakarta.servlet.FilterChain;
@@ -29,40 +30,67 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
   private final JwtProvider jwtProvider;
+  private final RedisService redisService;
   private final ObjectMapper objectMapper;
 
   @Override
   protected void doFilterInternal(HttpServletRequest request,
                                   @NotNull HttpServletResponse response,
                                   @NotNull FilterChain filterChain) throws ServletException, IOException {
-    String bearerToken = request.getHeader("Authorization");
 
-    if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+    String bearer = request.getHeader("Authorization");
+
+    if (bearer == null || !bearer.startsWith("Bearer ")) {
       filterChain.doFilter(request, response);
       return;
     }
 
+    String token = bearer.substring(7);
+
     try {
-      Long userId = jwtProvider.getUserId(bearerToken);
-      String role = jwtProvider.getRole(bearerToken);
+      if (isTokenBlacklisted(token)) {
+        log.warn("차단된 토큰으로 접근 시도");
+        throw new SecurityException("블랙리스트 토큰입니다.");
+      }
 
-      List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role));
-      CustomUserDetails userDetails = new CustomUserDetails(userId, Role.valueOf(role));
+      Long userId = jwtProvider.getUserId(token);
+      String roleString = jwtProvider.getRole(token);
 
-      Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, bearerToken, authorities);
+      Role role = Role.valueOf(roleString);
+      List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role.name()));
+
+      CustomUserDetails userDetails = new CustomUserDetails(userId, role);
+
+      Authentication authentication =
+          new UsernamePasswordAuthenticationToken(userDetails, token, authorities);
       SecurityContextHolder.getContext().setAuthentication(authentication);
 
       filterChain.doFilter(request, response);
 
     } catch (Exception e) {
       log.warn("JWT 인증 실패: {}", e.getMessage());
+
       response.setStatus(HttpStatus.UNAUTHORIZED.value());
       response.setContentType("application/json");
       response.getWriter().write(
           objectMapper.writeValueAsString(new ErrorResponse(AuthErrorCode.INVALID_BEARER_TOKEN))
       );
       SecurityContextHolder.clearContext();
+    }
+  }
 
+  private boolean isTokenBlacklisted(String token) {
+    try {
+      Long userId = jwtProvider.getUserId(token);
+      String redisKey = "BL:AT:" + userId;
+
+      return redisService.get(redisKey)
+          .map(blacklistedToken -> blacklistedToken.equals(token))
+          .orElse(false);
+
+    } catch (Exception e) {
+      log.warn("블랙리스트 조회 중 예외 발생: {}", e.getMessage());
+      return false;
     }
   }
 }

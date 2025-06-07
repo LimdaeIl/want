@@ -14,11 +14,13 @@ import com.want.user.domain.user.User;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j(topic = "AuthServiceImpl")
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -28,9 +30,20 @@ public class AuthServiceImpl implements AuthService {
   private final JwtProvider jwtProvider;
   private final RedisService redisService;
 
+  private User findUserById(Long userId) {
+    return userRepository.findUserById(userId)
+        .orElseThrow(() -> new CustomException(AuthErrorCode.USER_NOT_FOUND_BY_ID));
+  }
+
   private User findUserByEmail(String email) {
     return userRepository.findUserByEmail(email)
         .orElseThrow(() -> new CustomException(AuthErrorCode.USER_NOT_FOUND_BY_EMAIL));
+  }
+
+  private void existsUserByEmail(String email) {
+    if (userRepository.existsUserByEmail(email)) {
+      throw new CustomException(AuthErrorCode.USER_ALREADY_EXISTS);
+    }
   }
 
   private User findUserByPhone(String phone) {
@@ -40,12 +53,6 @@ public class AuthServiceImpl implements AuthService {
 
   private void existsUserByPhone(String phone) {
     if (userRepository.existsUserByPhone(phone)) {
-      throw new CustomException(AuthErrorCode.USER_ALREADY_EXISTS);
-    }
-  }
-
-  private void existsUserByEmail(String email) {
-    if (userRepository.existsUserByEmail(email)) {
       throw new CustomException(AuthErrorCode.USER_ALREADY_EXISTS);
     }
   }
@@ -84,11 +91,11 @@ public class AuthServiceImpl implements AuthService {
     String accessToken = jwtProvider.createAccessToken(userByEmail);
     String refreshToken = jwtProvider.createRefreshToken(userByEmail);
 
-    redisService.set("RT:" + userByEmail.getId(),
-        refreshToken,
-        jwtProvider.getRefreshTokenExpire(),
-        TimeUnit.MILLISECONDS
-    );
+    String rtKey = "RT:" + userByEmail.getId();
+    if (redisService.hasKey(rtKey)) {
+      redisService.delete(rtKey);
+    }
+    redisService.set(rtKey, refreshToken, jwtProvider.getRefreshTokenExpire(), TimeUnit.MILLISECONDS);
 
     ResponseCookie cookie = ResponseCookie
         .from("RT", refreshToken)
@@ -102,5 +109,24 @@ public class AuthServiceImpl implements AuthService {
     return SignInResult.of(userByEmail, accessToken, cookie);
   }
 
+  @Transactional
+  @Override
+  public void signOut(String rt, String at) {
+    Long userIdByAT = jwtProvider.getUserId(at);
+    Long userIdByRT = jwtProvider.getUserId(rt);
 
+    if (!userIdByAT.equals(userIdByRT)) {
+      throw new CustomException(AuthErrorCode.TAMPERED_TOKEN);
+    }
+
+    log.info("userIdByAT = {}", userIdByAT);
+    log.info("userIdByRT = {}", userIdByRT);
+    redisService.delete("RT:" + userIdByRT);
+
+    long remainRT = jwtProvider.getRemainingMillisByToken(rt);
+    long remainAT = jwtProvider.getRemainingMillisByToken(at);
+
+    redisService.set("BL:RT:" + userIdByRT, rt, remainRT, TimeUnit.MILLISECONDS);
+    redisService.set("BL:AT:" + userIdByAT, at.substring(7), remainAT, TimeUnit.MILLISECONDS);
+  }
 }

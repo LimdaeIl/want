@@ -11,13 +11,17 @@ import com.want.user.application.service.auth.AuthService;
 import com.want.user.domain.auth.AuthSuccessCode;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j(topic = "AuthController")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 @RestController
@@ -54,4 +58,22 @@ public class AuthController {
             result.response()
         ));
   }
+
+  // 로그아웃
+  @PostMapping("/sign-out")
+  public ResponseEntity<ApiResponse<Void>> signOut(
+      @CookieValue(value = "RT", required = false) String rt,
+      @RequestHeader(value = "Authorization") String at
+  ) {
+
+
+    log.info("rt = {}", rt);
+    log.info("at = {}", at);
+    authService.signOut(rt, at);
+    return ResponseEntity.noContent().build();
+  }
+
+  // 토큰 재발급
+
+
 }
