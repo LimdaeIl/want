@@ -10,4 +10,6 @@ public interface AuthService {
   SignupResponse signup(@Valid SignupRequest request);
 
   SignInResult signIn(@Valid SignInRequest request);
+
+  void signOut(String rt, String at);
 }

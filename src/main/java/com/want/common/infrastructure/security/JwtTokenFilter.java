@@ -56,7 +56,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
       Long userId = jwtProvider.getUserId(token);
       String roleString = jwtProvider.getRole(token);
 
-      Role role = Role.valueOf(roleString); // Role Enum 변환
+      Role role = Role.valueOf(roleString);
       List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(role.name()));
 
       CustomUserDetails userDetails = new CustomUserDetails(userId, role);
