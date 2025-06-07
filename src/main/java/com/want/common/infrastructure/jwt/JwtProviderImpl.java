@@ -93,6 +93,11 @@ public class JwtProviderImpl implements JwtProvider {
   @Override
   public Long getUserId(String bearerToken) {
     String subject = extractClaims(bearerToken).getSubject();
+    if (subject == null) {
+      log.warn("JWT 에 subject 정보가 없습니다.");
+      throw new CustomException(AuthErrorCode.INVALID_BEARER_TOKEN);
+    }
+
     return Long.parseLong(subject);
   }
 

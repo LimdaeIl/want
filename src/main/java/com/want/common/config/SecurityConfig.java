@@ -30,7 +30,8 @@ public class SecurityConfig {
   private static final String[] AUTH_WHITELIST = {
       "/api/v1/auth/signup",
       "/api/v1/auth/sign-in",
-      "/api/v1/auth/sign-out"
+      "/api/v1/auth/sign-out",
+      "/api/v1/auth/reissue"
   };
 
   @Bean

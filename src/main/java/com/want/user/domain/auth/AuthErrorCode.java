@@ -32,7 +32,8 @@ public enum AuthErrorCode implements ErrorCode {
   REFRESH_TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "리프레시 토큰을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
   MALFORMED_TOKEN(HttpStatus.BAD_REQUEST.value(), "JWT 형식이 잘못되었습니다.", HttpStatus.BAD_REQUEST),
   TAMPERED_TOKEN(HttpStatus.UNAUTHORIZED.value(), "JWT 서명이 위조되었거나 무결성이 손상되었습니다.", HttpStatus.UNAUTHORIZED),
-  TOKEN_TOO_EARLY(HttpStatus.BAD_REQUEST.value(), "JWT 활성화 시간이 아직 되지 않았습니다.", HttpStatus.BAD_REQUEST);
+  TOKEN_TOO_EARLY(HttpStatus.BAD_REQUEST.value(), "JWT 활성화 시간이 아직 되지 않았습니다.", HttpStatus.BAD_REQUEST),
+  TOKEN_BLACKLISTED(HttpStatus.UNAUTHORIZED.value(), "블랙리스트에 등록된 JWT 입니다.", HttpStatus.UNAUTHORIZED);
 
 
   private final Integer code;

@@ -4,6 +4,8 @@ package com.want.user.presentation;
 import com.want.common.response.ApiResponse;
 import com.want.user.application.dto.auth.request.SignInRequest;
 import com.want.user.application.dto.auth.request.SignupRequest;
+import com.want.user.application.dto.auth.response.ReissueResponse;
+import com.want.user.application.dto.auth.response.ReissueResult;
 import com.want.user.application.dto.auth.response.SignInResponse;
 import com.want.user.application.dto.auth.response.SignInResult;
 import com.want.user.application.dto.auth.response.SignupResponse;
@@ -59,21 +61,30 @@ public class AuthController {
         ));
   }
 
-  // 로그아웃
   @PostMapping("/sign-out")
   public ResponseEntity<ApiResponse<Void>> signOut(
       @CookieValue(value = "RT", required = false) String rt,
       @RequestHeader(value = "Authorization") String at
   ) {
-
-
-    log.info("rt = {}", rt);
-    log.info("at = {}", at);
     authService.signOut(rt, at);
     return ResponseEntity.noContent().build();
   }
 
-  // 토큰 재발급
+  @PostMapping("/reissue")
+  public ResponseEntity<ApiResponse<ReissueResponse>> reissue(
+      @CookieValue(value = "RT", required = false) String rt
+  ) {
+    ReissueResult result = authService.reissue(rt);
+    ReissueResponse response = ReissueResponse.from(result);
 
-
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .header("Set-Cookie", result.refreshTokenCookie().toString())
+        .body(new ApiResponse<>(
+                AuthSuccessCode.USER_TOKEN_REISSUE_SUCCESS.getCode(),
+                AuthSuccessCode.USER_TOKEN_REISSUE_SUCCESS.getMessage(),
+                response
+            )
+        );
+  }
 }
