@@ -14,7 +14,7 @@ public enum AuthSuccessCode implements SuccessCode {
   USER_SIGNUP_SUCCESS(0, "회원가입이 성공적으로 완료되었습니다.", OK),
   USER_LOGIN_SUCCESS(0, "로그인이 성공적으로 완료되었습니다.", OK),
   USER_LOGOUT_SUCCESS(0, "로그아웃이 성공적으로 완료되었습니다.", OK),
-  USER_TOKEN_GENERATION_SUCCESS(0, "토큰이 성공적으로 발급되었습니다.", OK),
+  USER_TOKEN_REISSUE_SUCCESS(0, "토큰이 성공적으로 발급되었습니다.", OK),
   USER_TOKEN_VALIDATION_SUCCESS(0, "토큰이 유효합니다.", OK),
 
   EMAIL_AVAILABLE(0, "이메일 사용 가능합니다.", OK),

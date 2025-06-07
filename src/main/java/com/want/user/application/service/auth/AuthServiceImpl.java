@@ -6,6 +6,7 @@ import com.want.common.infrastructure.jwt.JwtProvider;
 import com.want.common.infrastructure.redis.RedisService;
 import com.want.user.application.dto.auth.request.SignInRequest;
 import com.want.user.application.dto.auth.request.SignupRequest;
+import com.want.user.application.dto.auth.response.ReissueResult;
 import com.want.user.application.dto.auth.response.SignInResult;
 import com.want.user.application.dto.auth.response.SignupResponse;
 import com.want.user.domain.auth.AuthErrorCode;
@@ -91,11 +92,11 @@ public class AuthServiceImpl implements AuthService {
     String accessToken = jwtProvider.createAccessToken(userByEmail);
     String refreshToken = jwtProvider.createRefreshToken(userByEmail);
 
-    String rtKey = "RT:" + userByEmail.getId();
+    String rtKey = "RT:" + refreshToken;
     if (redisService.hasKey(rtKey)) {
       redisService.delete(rtKey);
     }
-    redisService.set(rtKey, refreshToken, jwtProvider.getRefreshTokenExpire(), TimeUnit.MILLISECONDS);
+    redisService.set(rtKey, userByEmail.getId().toString(), jwtProvider.getRefreshTokenExpire(), TimeUnit.MILLISECONDS);
 
     ResponseCookie cookie = ResponseCookie
         .from("RT", refreshToken)
@@ -115,18 +116,54 @@ public class AuthServiceImpl implements AuthService {
     Long userIdByAT = jwtProvider.getUserId(at);
     Long userIdByRT = jwtProvider.getUserId(rt);
 
+    findUserById(userIdByRT);
+
     if (!userIdByAT.equals(userIdByRT)) {
       throw new CustomException(AuthErrorCode.TAMPERED_TOKEN);
     }
 
-    log.info("userIdByAT = {}", userIdByAT);
-    log.info("userIdByRT = {}", userIdByRT);
-    redisService.delete("RT:" + userIdByRT);
+    redisService.delete("RT:" + rt);
 
     long remainRT = jwtProvider.getRemainingMillisByToken(rt);
     long remainAT = jwtProvider.getRemainingMillisByToken(at);
 
-    redisService.set("BL:RT:" + userIdByRT, rt, remainRT, TimeUnit.MILLISECONDS);
-    redisService.set("BL:AT:" + userIdByAT, at.substring(7), remainAT, TimeUnit.MILLISECONDS);
+    redisService.set("BL:" + rt, userIdByRT.toString(), remainRT, TimeUnit.MILLISECONDS);
+    redisService.set("BL:" + at.substring(7), userIdByAT.toString(), remainAT, TimeUnit.MILLISECONDS);
+  }
+
+  @Transactional
+  @Override
+  public ReissueResult reissue(String rt) {
+    Long userId = jwtProvider.getUserId(rt);
+
+    if (redisService.hasKey("BL:" + rt)) {
+      throw new CustomException(AuthErrorCode.TOKEN_BLACKLISTED);
+    }
+
+    String savedRT = redisService.get("RT:" + rt)
+        .orElseThrow(() -> new CustomException(AuthErrorCode.REFRESH_TOKEN_NOT_FOUND));
+
+    if (!savedRT.equals(rt)) {
+      throw new CustomException(AuthErrorCode.TAMPERED_TOKEN);
+    }
+
+    User user = findUserById(userId);
+
+    String newAT = jwtProvider.createAccessToken(user);
+    String newRT = jwtProvider.createRefreshToken(user);
+
+    redisService.delete("RT:" + rt);
+    redisService.set("RT:" + rt, newRT, jwtProvider.getRefreshTokenExpire(), TimeUnit.MILLISECONDS);
+
+    ResponseCookie cookie = ResponseCookie
+        .from("RT", newRT)
+        .httpOnly(true)
+        .secure(true)
+        .sameSite("Strict")
+        .path("/")
+        .maxAge(Duration.ofMillis(jwtProvider.getRefreshTokenExpire()))
+        .build();
+
+    return ReissueResult.of(newAT, cookie);
   }
 }
