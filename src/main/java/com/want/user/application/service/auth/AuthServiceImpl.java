@@ -134,16 +134,21 @@ public class AuthServiceImpl implements AuthService {
   @Transactional
   @Override
   public ReissueResult reissue(String rt) {
+    if (rt == null) {
+      throw new CustomException(AuthErrorCode.REFRESH_TOKEN_NOT_FOUND);
+    }
+
     Long userId = jwtProvider.getUserId(rt);
 
     if (redisService.hasKey("BL:" + rt)) {
       throw new CustomException(AuthErrorCode.TOKEN_BLACKLISTED);
     }
 
-    String savedRT = redisService.get("RT:" + rt)
+    String savedUserIdByRT = redisService.get("RT:" + rt)
         .orElseThrow(() -> new CustomException(AuthErrorCode.REFRESH_TOKEN_NOT_FOUND));
 
-    if (!savedRT.equals(rt)) {
+    log.info("rt = {}", savedUserIdByRT);
+    if (!savedUserIdByRT.equals(userId.toString())) {
       throw new CustomException(AuthErrorCode.TAMPERED_TOKEN);
     }
 
@@ -153,7 +158,8 @@ public class AuthServiceImpl implements AuthService {
     String newRT = jwtProvider.createRefreshToken(user);
 
     redisService.delete("RT:" + rt);
-    redisService.set("RT:" + rt, newRT, jwtProvider.getRefreshTokenExpire(), TimeUnit.MILLISECONDS);
+    redisService.set("RT:" + newRT, user.getId().toString(), jwtProvider.getRefreshTokenExpire(),
+        TimeUnit.MILLISECONDS);
 
     ResponseCookie cookie = ResponseCookie
         .from("RT", newRT)

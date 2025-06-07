@@ -14,5 +14,5 @@ public interface AuthService {
 
   void signOut(String rt, String at);
 
-  ReissueResult reissue(String at);
+  ReissueResult reissue(String rt);
 }
