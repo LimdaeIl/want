@@ -8,6 +8,7 @@ import static com.want.user.domain.auth.AuthErrorCode.TOKEN_EXPIRED;
 import static com.want.user.domain.auth.AuthErrorCode.TOKEN_TOO_EARLY;
 
 import com.want.common.exception.CustomException;
+import com.want.user.domain.auth.AuthErrorCode;
 import com.want.user.domain.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -22,10 +23,12 @@ import java.util.Date;
 import java.util.UUID;
 import javax.crypto.SecretKey;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
+@Slf4j(topic = "JwtProviderImpl")
 @Getter
 @Component
 public class JwtProviderImpl implements JwtProvider {
@@ -89,12 +92,19 @@ public class JwtProviderImpl implements JwtProvider {
 
   @Override
   public Long getUserId(String bearerToken) {
-    return extractClaims(bearerToken).get("userId", Long.class);
+    String subject = extractClaims(bearerToken).getSubject();
+    return Long.parseLong(subject);
   }
 
   @Override
   public String getRole(String bearerToken) {
-    return extractClaims(bearerToken).get("role", String.class);
+    String roleByToken = extractClaims(bearerToken).get("USER_ROLE", String.class);
+    if (roleByToken == null) {
+      log.warn("JWT 에 role 정보가 없습니다.");
+      throw new CustomException(AuthErrorCode.INVALID_BEARER_TOKEN);
+    }
+
+    return roleByToken;
   }
 
   @Override
@@ -105,18 +115,22 @@ public class JwtProviderImpl implements JwtProvider {
   }
 
 
-  private Claims extractClaims(String bearerToken) {
-    if (bearerToken.isBlank() || !bearerToken.startsWith(PREFIX_BEARER)) {
+  private Claims extractClaims(String token) {
+    if (token.isBlank()) {
       throw new CustomException(INVALID_BEARER_TOKEN);
     }
 
-    String token = bearerToken.substring(PREFIX_BEARER.length());
+    String pureToken = token.regionMatches(true, 0, PREFIX_BEARER, 0, PREFIX_BEARER.length())
+        ? token.substring(PREFIX_BEARER.length()).trim()
+        : token.trim();
+
+    log.info("pureToken: {}", pureToken);
 
     try {
       return Jwts.parser()
           .verifyWith(secretKey)
           .build()
-          .parseSignedClaims(token)
+          .parseSignedClaims(pureToken)
           .getPayload();
     } catch (ExpiredJwtException e) {
       throw new CustomException(TOKEN_EXPIRED);
