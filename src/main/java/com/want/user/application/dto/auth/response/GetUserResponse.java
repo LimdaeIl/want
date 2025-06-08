@@ -10,7 +10,6 @@ import lombok.Builder;
 public record GetUserResponse(
     Long id,
     String email,
-    String password,
     String name,
     String phone,
     String profileImage,
@@ -27,7 +26,6 @@ public record GetUserResponse(
     return GetUserResponse.builder()
         .id(user.getId())
         .email(user.getEmail())
-        .password(user.getPassword())
         .name(user.getName())
         .phone(user.getPhone())
         .profileImage(user.getProfileImage())
