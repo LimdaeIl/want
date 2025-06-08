@@ -20,3 +20,9 @@ Content-Type: application/json
 Authorization: Bearer {{at}}
 
 {}
+
+
+### 자신 정보 조회
+GET http://localhost:{{SERVER_PORT}}/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer {{at}}
