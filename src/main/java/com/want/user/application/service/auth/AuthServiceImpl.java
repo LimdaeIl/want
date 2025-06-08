@@ -11,6 +11,7 @@ import com.want.user.application.dto.auth.response.SignInResult;
 import com.want.user.application.dto.auth.response.SignupResponse;
 import com.want.user.domain.auth.AuthErrorCode;
 import com.want.user.domain.repository.UserRepository;
+import com.want.user.domain.user.Role;
 import com.want.user.domain.user.User;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
@@ -76,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
         .name(request.name())
         .phone(request.phone())
         .profileImage(request.profileImage())
+        .role(Role.ROLE_ADMIN) // TODO: 편의를 위한 ADMIN 자동 권한 부여
         .build();
 
     userRepository.save(buildUser);
