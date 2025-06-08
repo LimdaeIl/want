@@ -1,0 +1,22 @@
+@env=dev
+
+### 로그인
+POST http://localhost:{{SERVER_PORT}}/api/v1/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "test1234!"
+}
+
+> {%
+    client.global.set("at", response.body.data.accessToken);
+    client.global.set("id", response.body.data.id);
+%}
+
+### 회원 단 건 조회(관리자)
+GET http://localhost:{{SERVER_PORT}}/api/v1/users/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{}
