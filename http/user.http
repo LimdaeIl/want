@@ -26,3 +26,7 @@ Authorization: Bearer {{at}}
 GET http://localhost:{{SERVER_PORT}}/api/v1/users/me
 Content-Type: application/json
 Authorization: Bearer {{at}}
+
+### 동적 검색 구현
+GET http://localhost:{{SERVER_PORT}}/api/v1/users
+Authorization: Bearer {{at}}
