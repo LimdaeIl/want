@@ -40,12 +40,12 @@ public class QuerydslWhereUtil {
     return (values == null || values.isEmpty()) ? null : path.in(values);
   }
 
-  public static BooleanExpression IsNotNull(Expression<?> path) {
-    return path != null ? ((SimpleExpression<?>) path).isNotNull() : null;
+  public static BooleanExpression isNotNull(Expression<?> path) {
+    return (path instanceof SimpleExpression) ? ((SimpleExpression<?>) path).isNotNull() : null;
   }
 
-  public static BooleanExpression IsNull(Expression<?> path) {
-    return path != null ? ((SimpleExpression<?>) path).isNull() : null;
+  public static BooleanExpression isNull(Expression<?> path) {
+    return (path instanceof SimpleExpression) ? ((SimpleExpression<?>) path).isNull() : null;
   }
 
   // 날짜 범위 조건
