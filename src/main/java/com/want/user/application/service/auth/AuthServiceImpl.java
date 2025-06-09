@@ -10,7 +10,7 @@ import com.want.user.application.dto.auth.request.SignupRequest;
 import com.want.user.application.dto.auth.response.ReissueResult;
 import com.want.user.application.dto.auth.response.SignInResult;
 import com.want.user.application.dto.auth.response.SignupResponse;
-import com.want.user.application.dto.auth.response.VerifyEmailCodeRequest;
+import com.want.user.application.dto.auth.request.VerifyEmailCodeRequest;
 import com.want.user.domain.auth.AuthErrorCode;
 import com.want.user.domain.repository.UserRepository;
 import com.want.user.domain.user.Role;

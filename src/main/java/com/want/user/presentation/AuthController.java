@@ -10,7 +10,7 @@ import com.want.user.application.dto.auth.response.ReissueResult;
 import com.want.user.application.dto.auth.response.SignInResponse;
 import com.want.user.application.dto.auth.response.SignInResult;
 import com.want.user.application.dto.auth.response.SignupResponse;
-import com.want.user.application.dto.auth.response.VerifyEmailCodeRequest;
+import com.want.user.application.dto.auth.request.VerifyEmailCodeRequest;
 import com.want.user.application.service.auth.AuthService;
 import com.want.user.domain.auth.AuthSuccessCode;
 import jakarta.validation.Valid;

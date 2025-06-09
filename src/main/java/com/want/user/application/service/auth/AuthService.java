@@ -6,7 +6,7 @@ import com.want.user.application.dto.auth.request.SignupRequest;
 import com.want.user.application.dto.auth.response.ReissueResult;
 import com.want.user.application.dto.auth.response.SignInResult;
 import com.want.user.application.dto.auth.response.SignupResponse;
-import com.want.user.application.dto.auth.response.VerifyEmailCodeRequest;
+import com.want.user.application.dto.auth.request.VerifyEmailCodeRequest;
 import jakarta.validation.Valid;
 
 public interface AuthService {
