@@ -82,10 +82,6 @@ public class User extends BaseEntity {
       throw new CustomException(UserErrorCode.USER_PASSWORD_BLANK);
     }
 
-    if (this.password.equals(newPassword)) {
-      throw new CustomException(UserErrorCode.USER_PASSWORD_SAME_AS_OLD);
-    }
-
     this.password = newPassword;
   }
 

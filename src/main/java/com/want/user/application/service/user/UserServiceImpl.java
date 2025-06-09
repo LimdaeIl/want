@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
       throw new CustomException(UserErrorCode.USER_PASSWORD_SAME_AS_OLD);
     }
 
-    userById.updatePassword(passwordEncoder.encode(request.password()));
+    userById.updatePassword(passwordEncoder.encode(request.newPassword()));
   }
 
   @Transactional

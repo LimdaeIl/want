@@ -95,8 +95,8 @@ public class UserController {
         .status(HttpStatus.OK)
         .body(
             new ApiResponse<>(
-                UserSuccessCode.USER_GET_SUCCESS.getCode(),
-                UserSuccessCode.USER_GET_SUCCESS.getMessage(),
+                UserSuccessCode.USER_LIST_GET_SUCCESS.getCode(),
+                UserSuccessCode.USER_LIST_GET_SUCCESS.getMessage(),
                 response
             )
         );
@@ -121,7 +121,7 @@ public class UserController {
         );
   }
 
-  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER', 'CUSTOMER')")
+  @PreAuthorize("hasRole('ADMIN') or #userDetails.id == #id")
   @PatchMapping("/{id}/password")
   public ResponseEntity<ApiResponse<Void>> updatePassword(
       @AuthenticationPrincipal CustomUserDetails userDetails,
