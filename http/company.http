@@ -1,0 +1,28 @@
+@env=dev
+
+### 로그인
+POST http://localhost:{{SERVER_PORT}}/api/v1/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "test1234!"
+}
+
+> {%
+    client.global.set("at", response.body.data.accessToken);
+%}
+
+### 회사 등록
+POST http://localhost:{{SERVER_PORT}}/api/v1/companies
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "name": "새로운 회사"
+}
+
+### 회사 동적 조회
+GET http://localhost:{{SERVER_PORT}}/api/v1/companies?name=회사
+Content-Type: application/json
+Authorization: Bearer {{at}}
