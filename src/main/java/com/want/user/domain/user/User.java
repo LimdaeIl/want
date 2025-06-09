@@ -1,6 +1,7 @@
 package com.want.user.domain.user;
 
 import com.want.common.audit.BaseEntity;
+import com.want.common.exception.CustomException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -63,4 +64,56 @@ public class User extends BaseEntity {
       history.setUser(this);
     }
   }
+
+  public void updateEmail(String newEmail) {
+    if (this.email.equals(newEmail)) {
+      throw new CustomException(UserErrorCode.USER_EMAIL_SAME_AS_OLD);
+    }
+
+    if (newEmail == null || newEmail.isEmpty()) {
+      throw new CustomException(UserErrorCode.USER_EMAIL_BLANK);
+    }
+
+    this.email = newEmail;
+  }
+
+  public void updatePassword(String newPassword) {
+    if (newPassword == null || newPassword.isEmpty()) {
+      throw new CustomException(UserErrorCode.USER_PASSWORD_BLANK);
+    }
+
+    this.password = newPassword;
+  }
+
+  public void updateName(String name) {
+    if (name == null || name.isEmpty()) {
+      throw new CustomException(UserErrorCode.USER_NAME_INVALID);
+    }
+    this.name = name;
+  }
+
+  public void updateProfileImage(String newProfileImage) {
+    if (newProfileImage == null || newProfileImage.isBlank()) {
+      this.profileImage = null;
+      return;
+    }
+
+    this.profileImage = newProfileImage;
+  }
+
+  public void updateRole(Role role) {
+    if (role == null) {
+      throw new CustomException(UserErrorCode.USER_ROLE_INVALID);
+    }
+
+    this.role = role;
+  }
+
+  public void updatePhone(String newPhone) {
+    if (newPhone == null || newPhone.isBlank()) {
+      throw new CustomException(UserErrorCode.USER_PHONE_BLANK);
+    }
+    this.phone = newPhone;
+  }
+
 }

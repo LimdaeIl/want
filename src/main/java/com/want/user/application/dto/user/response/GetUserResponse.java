@@ -1,4 +1,4 @@
-package com.want.user.application.dto.auth.response;
+package com.want.user.application.dto.user.response;
 
 import com.want.user.domain.user.Role;
 import com.want.user.domain.user.User;
@@ -6,9 +6,8 @@ import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
 
-
 @Builder(access = AccessLevel.PRIVATE)
-public record GetMeResponse(
+public record GetUserResponse(
     Long id,
     String email,
     String name,
@@ -23,8 +22,8 @@ public record GetMeResponse(
     Long deletedBy
 ) {
 
-  public static GetMeResponse from(User user) {
-    return GetMeResponse.builder()
+  public static GetUserResponse from(User user) {
+    return GetUserResponse.builder()
         .id(user.getId())
         .email(user.getEmail())
         .name(user.getName())
@@ -39,4 +38,5 @@ public record GetMeResponse(
         .deletedBy(user.getDeletedBy())
         .build();
   }
+
 }

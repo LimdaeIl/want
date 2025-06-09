@@ -7,7 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.want.common.querydsl.QuerydslSortUtil;
 import com.want.common.querydsl.QuerydslWhereUtil;
 import com.want.user.application.dto.auth.request.UserSearchCondition;
-import com.want.user.application.dto.auth.response.GetUsersResponse;
+import com.want.user.application.dto.user.response.GetUsersResponse;
 import com.want.user.domain.repository.UserQuerydslRepository;
 import com.want.user.domain.user.QUser;
 import java.util.List;

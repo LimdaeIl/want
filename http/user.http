@@ -30,3 +30,51 @@ Authorization: Bearer {{at}}
 ### 동적 검색 구현
 GET http://localhost:{{SERVER_PORT}}/api/v1/users
 Authorization: Bearer {{at}}
+
+### 이메일 수정
+PATCH http://localhost:{{SERVER_PORT}}/api/v1/users/{{id}}/email
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "newEmail": "test1@test.com"
+}
+
+### 비밀번호 수정
+PATCH http://localhost:{{SERVER_PORT}}/api/v1/users/{{id}}/password
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "password": "test1234!",
+  "newPassword": "savdsSDMKF235!@"
+}
+
+### 회원 정보 수정(이름, 프로필사진)
+PATCH http://localhost:{{SERVER_PORT}}/api/v1/users/{{id}}/info
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "newName": "새로운이름",
+  "newProfileImage": ""
+}
+
+### 회원 권한 수정
+PATCH http://localhost:{{SERVER_PORT}}/api/v1/users/{{id}}/role
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "newRole": "ROLE_MANAGER"
+}
+
+
+### 회원 휴대전화번호 수정
+PATCH http://localhost:{{SERVER_PORT}}/api/v1/users/{{id}}/phone
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "newPhone": "0101231214987"
+}
