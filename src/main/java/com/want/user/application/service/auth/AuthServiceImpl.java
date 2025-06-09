@@ -4,23 +4,33 @@ package com.want.user.application.service.auth;
 import com.want.common.exception.CustomException;
 import com.want.common.infrastructure.jwt.JwtProvider;
 import com.want.common.infrastructure.redis.RedisService;
+import com.want.user.application.dto.auth.request.SendEmailCodeRequest;
 import com.want.user.application.dto.auth.request.SignInRequest;
 import com.want.user.application.dto.auth.request.SignupRequest;
 import com.want.user.application.dto.auth.response.ReissueResult;
 import com.want.user.application.dto.auth.response.SignInResult;
 import com.want.user.application.dto.auth.response.SignupResponse;
+import com.want.user.application.dto.auth.response.VerifyEmailCodeRequest;
 import com.want.user.domain.auth.AuthErrorCode;
 import com.want.user.domain.repository.UserRepository;
 import com.want.user.domain.user.Role;
 import com.want.user.domain.user.User;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
 @Slf4j(topic = "AuthServiceImpl")
 @RequiredArgsConstructor
@@ -31,6 +41,14 @@ public class AuthServiceImpl implements AuthService {
   private final PasswordEncoder passwordEncoder;
   private final JwtProvider jwtProvider;
   private final RedisService redisService;
+  private final JavaMailSender mailSender;
+  private final SpringTemplateEngine templateEngine;
+
+
+  @Value("${spring.mail.username}")
+  private String fromEmail;
+
+  private static final Integer EMAIL_TIME_OUT = 3;
 
   private User findUserById(Long userId) {
     return userRepository.findUserById(userId)
@@ -64,6 +82,16 @@ public class AuthServiceImpl implements AuthService {
       throw new CustomException(AuthErrorCode.INVALID_SIGN_IN);
     }
   }
+
+  private Integer generateSecureRandomNumber() {
+    SecureRandom secureRandom = new SecureRandom();
+    StringBuilder randomNumber = new StringBuilder();
+    for (int i = 0; i < 6; i++) {
+      randomNumber.append(secureRandom.nextInt(10));
+    }
+    return Integer.parseInt(randomNumber.toString());
+  }
+
 
   @Transactional
   @Override
@@ -173,5 +201,46 @@ public class AuthServiceImpl implements AuthService {
         .build();
 
     return ReissueResult.of(newAT, cookie);
+  }
+
+  @Transactional
+  @Override
+  public void sendEmailCode(SendEmailCodeRequest request) {
+    existsUserByEmail(request.email());
+
+    String key = "EC:" + request.email();
+    Integer code = generateSecureRandomNumber();
+    redisService.set(key, code.toString(), EMAIL_TIME_OUT, TimeUnit.MINUTES);
+
+    Context context = new Context(); // thymeleaf Context
+    context.setVariable("code", code);
+    String htmlContent = templateEngine.process("email/code-verification", context);
+
+    try {
+      MimeMessage message = mailSender.createMimeMessage();
+      MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+      helper.setTo(request.email());
+      helper.setFrom(fromEmail);
+      helper.setSubject("[WANT] 이메일 인증 코드");
+      helper.setText(htmlContent, true);
+      mailSender.send(message);
+
+    } catch (MessagingException e) {
+      throw new CustomException(AuthErrorCode.FAILED_VERIFY_EMAIL);
+    }
+  }
+
+  @Transactional
+  @Override
+  public void verifyEmailCode(VerifyEmailCodeRequest request) {
+    existsUserByEmail(request.email());
+
+    String key = "EC:" + request.email();
+    String verifyCode = redisService.get(key)
+        .orElseThrow(() -> new CustomException(AuthErrorCode.FAILED_VERIFY_EMAIL));
+
+    if (!Integer.valueOf(verifyCode).equals(request.code())) {
+      throw new CustomException(AuthErrorCode.FAILED_VERIFY_CODE);
+    }
   }
 }

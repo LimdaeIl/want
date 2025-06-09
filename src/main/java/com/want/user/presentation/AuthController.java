@@ -2,6 +2,7 @@ package com.want.user.presentation;
 
 
 import com.want.common.response.ApiResponse;
+import com.want.user.application.dto.auth.request.SendEmailCodeRequest;
 import com.want.user.application.dto.auth.request.SignInRequest;
 import com.want.user.application.dto.auth.request.SignupRequest;
 import com.want.user.application.dto.auth.response.ReissueResponse;
@@ -9,6 +10,7 @@ import com.want.user.application.dto.auth.response.ReissueResult;
 import com.want.user.application.dto.auth.response.SignInResponse;
 import com.want.user.application.dto.auth.response.SignInResult;
 import com.want.user.application.dto.auth.response.SignupResponse;
+import com.want.user.application.dto.auth.response.VerifyEmailCodeRequest;
 import com.want.user.application.service.auth.AuthService;
 import com.want.user.domain.auth.AuthSuccessCode;
 import jakarta.validation.Valid;
@@ -87,4 +89,30 @@ public class AuthController {
             )
         );
   }
+
+  @PostMapping("/send/email-code")
+  public ResponseEntity<ApiResponse<Void>> sendEmailCode(
+      @RequestBody @Valid SendEmailCodeRequest request
+  ) {
+    authService.sendEmailCode(request);
+
+    return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/verify/email-code")
+  public ResponseEntity<ApiResponse<Void>> verifyEmailCode(
+      @RequestBody @Valid VerifyEmailCodeRequest request
+  ) {
+    authService.verifyEmailCode(request);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                AuthSuccessCode.EMAIL_VERIFICATION_SUCCESS.getCode(),
+                AuthSuccessCode.EMAIL_VERIFICATION_SUCCESS.getMessage(),
+                null
+            )
+        );
+  }
+
 }
