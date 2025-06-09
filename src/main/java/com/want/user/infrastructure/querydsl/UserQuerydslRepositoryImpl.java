@@ -38,8 +38,8 @@ public class UserQuerydslRepositoryImpl implements UserQuerydslRepository {
         .and(QuerydslWhereUtil.betweenIfNotNull(user.updatedAt, condition.updatedFrom(), condition.updatedTo()))
         .and(QuerydslWhereUtil.betweenIfNotNull(user.deletedAt, condition.deletedFrom(), condition.deletedTo()))
         .and(QuerydslWhereUtil.eqIfNotNull(user.createdBy, condition.createdBy()))
-        .and(QuerydslWhereUtil.eqIfNotNull(user.createdBy, condition.createdBy()))
-        .and(QuerydslWhereUtil.eqIfNotNull(user.createdBy, condition.createdBy()));
+        .and(QuerydslWhereUtil.eqIfNotNull(user.updatedBy, condition.updatedBy()))
+        .and(QuerydslWhereUtil.eqIfNotNull(user.deletedBy, condition.deletedBy()));
 
     List<OrderSpecifier<?>> orderSpecifiers = QuerydslSortUtil.toOrderSpecifier(
         pageable.getSort(),
