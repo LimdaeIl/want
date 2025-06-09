@@ -18,7 +18,7 @@ public record SignupRequest(
     String password,
 
     @NotBlank(message = "이름: 이름은 필수입니다.")
-    @Size(max = 10, message = "이름: 이름은 10자 이하입니다.") // 어느 조건이 틀렸는지 파악하기 용이!
+    @Size(max = 10, message = "이름: 이름은 10자 이하입니다.")
     @Pattern(
         regexp = "^[가-힣a-zA-Z0-9]+$",
         message = "이름: 한글, 영어 대소문자, 숫자만 입력 가능합니다."

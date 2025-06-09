@@ -4,11 +4,21 @@ import com.want.common.config.PagedResponse;
 import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.common.response.ApiResponse;
 import com.want.user.application.dto.auth.request.UserSearchCondition;
-import com.want.user.application.dto.auth.response.GetMeResponse;
-import com.want.user.application.dto.auth.response.GetUserResponse;
-import com.want.user.application.dto.auth.response.GetUsersResponse;
+import com.want.user.application.dto.user.request.UpdateEmailRequest;
+import com.want.user.application.dto.user.request.UpdateInfoRequest;
+import com.want.user.application.dto.user.request.UpdatePasswordRequest;
+import com.want.user.application.dto.user.request.UpdatePhoneRequest;
+import com.want.user.application.dto.user.request.UpdateRoleRequest;
+import com.want.user.application.dto.user.response.GetMeResponse;
+import com.want.user.application.dto.user.response.GetUserResponse;
+import com.want.user.application.dto.user.response.GetUsersResponse;
+import com.want.user.application.dto.user.response.UpdateEmailResponse;
+import com.want.user.application.dto.user.response.UpdateInfoResponse;
+import com.want.user.application.dto.user.response.UpdatePhoneResponse;
+import com.want.user.application.dto.user.response.UpdateRoleResponse;
 import com.want.user.application.service.user.UserService;
 import com.want.user.domain.user.UserSuccessCode;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +30,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -83,11 +95,104 @@ public class UserController {
         .status(HttpStatus.OK)
         .body(
             new ApiResponse<>(
-                UserSuccessCode.USERS_GET_SUCCESS.getCode(),
-                UserSuccessCode.USERS_GET_SUCCESS.getMessage(),
+                UserSuccessCode.USER_GET_SUCCESS.getCode(),
+                UserSuccessCode.USER_GET_SUCCESS.getMessage(),
                 response
             )
         );
   }
 
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER', 'CUSTOMER')")
+  @PatchMapping("/{id}/email")
+  public ResponseEntity<ApiResponse<UpdateEmailResponse>> updateEmail(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable Long id,
+      @RequestBody @Valid UpdateEmailRequest request
+  ) {
+    UpdateEmailResponse response = userService.updateEmail(userDetails, id, request);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                UserSuccessCode.USER_EMAIL_UPDATE_SUCCESS.getCode(),
+                UserSuccessCode.USER_EMAIL_UPDATE_SUCCESS.getMessage(),
+                response
+            )
+        );
+  }
+
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER', 'CUSTOMER')")
+  @PatchMapping("/{id}/password")
+  public ResponseEntity<ApiResponse<Void>> updatePassword(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable Long id,
+      @RequestBody @Valid UpdatePasswordRequest request
+  ) {
+    userService.updatePassword(userDetails, id, request);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                UserSuccessCode.USER_PASSWORD_UPDATE_SUCCESS.getCode(),
+                UserSuccessCode.USER_PASSWORD_UPDATE_SUCCESS.getMessage(),
+                null
+            )
+        );
+  }
+
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER', 'CUSTOMER')")
+  @PatchMapping("/{id}/info")
+  public ResponseEntity<ApiResponse<UpdateInfoResponse>> updateInfo(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable Long id,
+      @RequestBody @Valid UpdateInfoRequest request
+  ) {
+    UpdateInfoResponse response = userService.updateInfo(userDetails, id, request);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                UserSuccessCode.USER_UPDATE_SUCCESS.getCode(),
+                UserSuccessCode.USER_UPDATE_SUCCESS.getMessage(),
+            response
+            )
+        );
+  }
+
+  @PreAuthorize("hasAnyRole('ADMIN')")
+  @PatchMapping("/{id}/role")
+  public ResponseEntity<ApiResponse<UpdateRoleResponse>> updateRole(
+      @PathVariable Long id,
+      @RequestBody @Valid UpdateRoleRequest request
+  ) {
+    UpdateRoleResponse response = userService.updateRole(id, request);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                UserSuccessCode.USER_UPDATE_SUCCESS.getCode(),
+                UserSuccessCode.USER_UPDATE_SUCCESS.getMessage(),
+                response
+            )
+        );
+  }
+
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER', 'CUSTOMER')")
+  @PatchMapping("/{id}/phone")
+  public ResponseEntity<ApiResponse<UpdatePhoneResponse>> updatePhone(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable Long id,
+      @RequestBody @Valid UpdatePhoneRequest request
+  ) {
+    UpdatePhoneResponse response = userService.updatePhone(userDetails, id, request);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                UserSuccessCode.USER_UPDATE_SUCCESS.getCode(),
+                UserSuccessCode.USER_UPDATE_SUCCESS.getMessage(),
+                response
+            )
+        );
+  }
 }

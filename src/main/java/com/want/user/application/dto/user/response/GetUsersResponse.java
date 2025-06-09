@@ -1,4 +1,4 @@
-package com.want.user.application.dto.auth.response;
+package com.want.user.application.dto.user.response;
 
 import com.want.user.domain.user.Role;
 import java.time.LocalDateTime;
