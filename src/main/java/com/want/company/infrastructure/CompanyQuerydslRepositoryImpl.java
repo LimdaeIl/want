@@ -44,7 +44,6 @@ public class CompanyQuerydslRepositoryImpl implements CompanyQuerydslRepository 
         Set.of(
             "id",
             "name",
-            "created",
             "createdAt",
             "createdBy",
             "updatedAt",

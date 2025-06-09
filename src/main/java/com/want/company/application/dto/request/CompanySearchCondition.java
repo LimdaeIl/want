@@ -25,40 +25,41 @@ public record CompanySearchCondition(
     @Schema(description = "삭제 여부")
     Boolean isDeleted,
 
+
     // ───── 생성일 필터 ─────
-    @Schema(description = "회원 가입일 시작일 (YYYY-MM-DD)")
+    @Schema(description = "업체 등록일 시작일 (YYYY-MM-DD)")
     @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime createdFrom,
 
-    @Schema(description = "회원 가입일 종료일 (YYYY-MM-DD)")
+    @Schema(description = "업체 등록일 종료일 (YYYY-MM-DD)")
     @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime createdTo,
 
-    @Schema(description = "회원 등록자 ID")
+    @Schema(description = "업체 등록자 ID")
     Long createdBy,
 
     // ───── 수정일 필터 ─────
-    @Schema(description = "회원 수정일 시작일 (YYYY-MM-DD)")
+    @Schema(description = "업체 수정일 시작일 (YYYY-MM-DDTHH:MM:SS)")
     @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime updatedFrom,
 
-    @Schema(description = "회원 수정일 종료일 (YYYY-MM-DD)")
+    @Schema(description = "업체 수정일 종료일 (YYYY-MM-DDTHH:MM:SS)")
     @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime updatedTo,
 
-    @Schema(description = "회원 수정자 ID")
+    @Schema(description = "업체 수정자 ID")
     Long updatedBy,
 
     // ───── 삭제일 필터 ─────
-    @Schema(description = "회원 삭제일 시작일 (YYYY-MM-DD)")
+    @Schema(description = "업체 삭제일 시작일 (YYYY-MM-DDTHH:MM:SS)")
     @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime deletedFrom,
 
-    @Schema(description = "회원 삭제일 종료일 (YYYY-MM-DD)")
+    @Schema(description = "업체 삭제일 종료일 (YYYY-MM-DDTHH:MM:SS)")
     @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime deletedTo,
 
-    @Schema(description = "회원 삭제자 ID")
+    @Schema(description = "업체 삭제자 ID")
     Long deletedBy
 
 ) {
