@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>WANT 이메일 인증</title>
+</head>
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+<h2 style="color: #4CAF50;">WANT 이메일 인증</h2>
+<p>안녕하세요!</p>
+<p>아래 인증 코드를 3분 이내에 입력해 주세요:</p>
+<div style="font-size: 24px; font-weight: bold; margin: 20px 0;" th:text="${code}">123456</div>
+<p style="color: gray;">이 코드는 보안을 위해 절대 다른 사람과 공유하지 마세요.</p>
+</body>
+</html>

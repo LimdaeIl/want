@@ -31,7 +31,9 @@ public class SecurityConfig {
       "/api/v1/auth/signup",
       "/api/v1/auth/sign-in",
       "/api/v1/auth/sign-out",
-      "/api/v1/auth/reissue"
+      "/api/v1/auth/reissue",
+      "/api/v1/auth/send/email-code",
+      "/api/v1/auth/verify/email-code"
   };
 
   @Bean

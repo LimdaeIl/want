@@ -26,7 +26,6 @@ spring:
         jdbc:
           time_zone: Asia/Seoul
 
-
 ---
 
 jwt:
@@ -43,3 +42,27 @@ spring:
     redis:
       port: ${REDIS_PORT}
       host: ${REDIS_HOST}
+
+---
+
+spring:
+  mail:
+    host: smtp.naver.com
+    port: 465
+    username: ${NAVER_ID}
+    password: ${NAVER_PW}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: true
+            required: true
+          connectionTimeout: ${TIME_OUT}
+          timeout: ${TIME_OUT}
+          writeTimeout: ${TIME_OUT}
+        debug: true
+
+---

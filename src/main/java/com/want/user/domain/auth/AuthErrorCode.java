@@ -16,6 +16,8 @@ public enum AuthErrorCode implements ErrorCode {
   USER_ALREADY_SIGNED_UP(HttpStatus.CONFLICT.value(), "이미 가입된 회원입니다.", HttpStatus.CONFLICT),
   USER_SIGNUP_FAILED(HttpStatus.INTERNAL_SERVER_ERROR.value(), "회원가입에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
   FAILED_VERIFY_EMAIL(HttpStatus.BAD_REQUEST.value(), "이메일: 이메일 인증에 실패했습니다.", HttpStatus.BAD_REQUEST),
+  FAILED_VERIFY_CODE(HttpStatus.BAD_REQUEST.value(), "이메일: 인증 코드가 올바르지 않습니다.", HttpStatus.BAD_REQUEST),
+
 
   // 회원 관련
   USER_NOT_FOUND_BY_PHONE(HttpStatus.NOT_FOUND.value(), "존재하지 않는 휴대전화번호입니다.", HttpStatus.NOT_FOUND),
