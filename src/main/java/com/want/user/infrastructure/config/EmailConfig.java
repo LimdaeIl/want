@@ -36,8 +36,8 @@ public class EmailConfig {
     javaMailProperties.put("mail.smtp.auth", "true");
     javaMailProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
     javaMailProperties.put("mail.smtp.starttls.enable", "true");
-    javaMailProperties.put("mail.debug", "true");
-    javaMailProperties.put("mail.smtp.ssl.trust", "smtp.naver.com");
+    javaMailProperties.put("mail.debug", "false");
+    javaMailProperties.put("mail.smtp.ssl.trust", host);
     javaMailProperties.put("mail.smtp.ssl.protocols", "TLSv1.2");
 
     mailSender.setJavaMailProperties(javaMailProperties);
