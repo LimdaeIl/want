@@ -2,7 +2,6 @@ package com.want.user.application.dto.auth.request;
 
 import com.want.user.domain.user.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -29,11 +28,11 @@ public record UserSearchCondition(
 
     // ───── 생성일 필터 ─────
     @Schema(description = "회원 가입일 시작일 (YYYY-MM-DD)")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime createdFrom,
 
     @Schema(description = "회원 가입일 종료일 (YYYY-MM-DD)")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime createdTo,
 
     @Schema(description = "회원 등록자 ID")
@@ -41,11 +40,11 @@ public record UserSearchCondition(
 
     // ───── 수정일 필터 ─────
     @Schema(description = "회원 수정일 시작일 (YYYY-MM-DD)")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime updatedFrom,
 
     @Schema(description = "회원 수정일 종료일 (YYYY-MM-DD)")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime updatedTo,
 
     @Schema(description = "회원 수정자 ID")
@@ -53,7 +52,7 @@ public record UserSearchCondition(
 
     // ───── 삭제일 필터 ─────
     @Schema(description = "회원 삭제일 시작일 (YYYY-MM-DD)")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @DateTimeFormat(iso = ISO.DATE_TIME)
     LocalDateTime deletedFrom,
 
     @Schema(description = "회원 삭제일 종료일 (YYYY-MM-DD)")
@@ -62,4 +61,5 @@ public record UserSearchCondition(
 
     @Schema(description = "회원 삭제자 ID")
     Long deletedBy
-) {}
+) {
+}
