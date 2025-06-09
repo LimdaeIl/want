@@ -35,4 +35,6 @@ public interface UserService {
   UpdateRoleResponse updateRole(Long id, UpdateRoleRequest request);
 
   UpdatePhoneResponse updatePhone(CustomUserDetails userDetails, Long id, UpdatePhoneRequest request);
+
+  void deleteUser(CustomUserDetails userDetails, Long id);
 }

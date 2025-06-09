@@ -28,6 +28,7 @@ public enum UserErrorCode implements ErrorCode {
   // ────────────── [회원 정보 수정 관련] ──────────────
   USER_UPDATE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR.value(), "회원 정보 수정에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
   USER_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR.value(), "회원 삭제에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+  USER_ALREADY_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR.value(), "이미 삭제된 회원입니다.", HttpStatus.INTERNAL_SERVER_ERROR),
   USER_EMAIL_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN.value(), "본인의 이메일만 수정할 수 있습니다.", HttpStatus.FORBIDDEN),
   USER_PASSWORD_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN.value(), "본인의 비밀번호만 수정할 수 있습니다.", HttpStatus.FORBIDDEN),
   USER_INFO_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN.value(), "본인의 정보만 수정할 수 있습니다.", HttpStatus.FORBIDDEN),

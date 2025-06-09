@@ -138,4 +138,20 @@ public class UserServiceImpl implements UserService {
 
     return UpdatePhoneResponse.from(userById);
   }
+
+  @Transactional
+  @Override
+  public void deleteUser(CustomUserDetails userDetails, Long id) {
+    if (!userDetails.id().equals(id) && !userDetails.role().equals(Role.ROLE_ADMIN)) {
+      throw new CustomException(UserErrorCode.USER_INFO_UPDATE_FORBIDDEN);
+    }
+
+    User userById = findUserById(id);
+
+    if (userById.isDeleted()) {
+      throw new CustomException(UserErrorCode.USER_ALREADY_DELETE_FAILED);
+    }
+
+    userById.markDeleted(id);
+  }
 }
