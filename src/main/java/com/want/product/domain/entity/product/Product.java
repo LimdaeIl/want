@@ -35,7 +35,7 @@ public class Product extends BaseEntity {
   private UUID id;
 
   @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-  private List<ProductCategory> productCategory = new ArrayList<>();
+  private List<ProductCategory> productCategories = new ArrayList<>();
 
   @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
   private List<ProductPolicy> productPolicies = new ArrayList<>();

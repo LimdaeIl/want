@@ -44,7 +44,7 @@ public class CategoryController {
     CreateCategoryResponse response = categoryService.createCategory(request);
 
     return ResponseEntity
-        .status(HttpStatus.OK)
+        .status(HttpStatus.CREATED)
         .body(new ApiResponse<>(
                 CategorySuccessCode.CATEGORY_CREATED.getCode(),
                 CategorySuccessCode.CATEGORY_CREATED.getMessage(),
@@ -71,11 +71,11 @@ public class CategoryController {
   }
 
   @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER', 'CUSTOMER')")
-  @GetMapping
+  @GetMapping("{name}")
   public ResponseEntity<ApiResponse<GetCategoryResponse>> getCategory(
-      @RequestBody @Valid GetCategoryRequest request
-  ) {
-    GetCategoryResponse response = categoryService.getCategory(request);
+      @PathVariable String name
+      ) {
+    GetCategoryResponse response = categoryService.getCategory(name);
 
     return ResponseEntity
         .status(HttpStatus.OK)
@@ -114,8 +114,8 @@ public class CategoryController {
 
     return ResponseEntity.ok(
         new ApiResponse<>(
-            CategorySuccessCode.CATEGORY_UPDATED.getCode(),
-            CategorySuccessCode.CATEGORY_UPDATED.getMessage(),
+            CategorySuccessCode.CATEGORY_DELETED.getCode(),
+            CategorySuccessCode.CATEGORY_DELETED.getMessage(),
             response
         )
     );

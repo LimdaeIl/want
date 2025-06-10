@@ -61,9 +61,11 @@ public class ProductPolicy extends BaseEntity {
   private Boolean stackableWithCoupon;
 
   public boolean isCurrentlyActive() {
+    LocalDateTime now = LocalDateTime.now();
+
     return isActive
-        && LocalDateTime.now().isAfter(startedAt)
-        && LocalDateTime.now().isBefore(endedAt);
+        && now.isAfter(startedAt)
+        && now.isBefore(endedAt);
   }
 
 }

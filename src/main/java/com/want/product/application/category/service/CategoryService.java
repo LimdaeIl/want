@@ -3,7 +3,6 @@ package com.want.product.application.category.service;
 import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.product.application.category.dto.request.CreateCategoriesRequest;
 import com.want.product.application.category.dto.request.CreateCategoryRequest;
-import com.want.product.application.category.dto.request.GetCategoryRequest;
 import com.want.product.application.category.dto.request.UpdateCategoryRequest;
 import com.want.product.application.category.dto.response.CreateCategoriesResponse;
 import com.want.product.application.category.dto.response.CreateCategoryResponse;
@@ -17,7 +16,7 @@ public interface CategoryService {
 
   List<CreateCategoriesResponse> createCategories(List<CreateCategoriesRequest> request);
 
-  GetCategoryResponse getCategory(GetCategoryRequest request);
+  GetCategoryResponse getCategory(String name);
 
   GetCategoryResponse updateCategory(UUID id, UpdateCategoryRequest request);
 

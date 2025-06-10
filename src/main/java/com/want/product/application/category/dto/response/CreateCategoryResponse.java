@@ -12,7 +12,7 @@ public record CreateCategoryResponse(
     return new CreateCategoryResponse(
         category.getId(),
         category.getName(),
-        category.getParentId() != null ? category.getParentId().getId() : null
+        category.getParent() != null ? category.getParent().getId() : null
     );
   }
 }

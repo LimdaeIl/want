@@ -4,7 +4,6 @@ import com.want.common.exception.CustomException;
 import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.product.application.category.dto.request.CreateCategoriesRequest;
 import com.want.product.application.category.dto.request.CreateCategoryRequest;
-import com.want.product.application.category.dto.request.GetCategoryRequest;
 import com.want.product.application.category.dto.request.UpdateCategoryRequest;
 import com.want.product.application.category.dto.response.CreateCategoriesResponse;
 import com.want.product.application.category.dto.response.CreateCategoryResponse;
@@ -51,7 +50,7 @@ public class CategoryServiceImpl implements CategoryService {
   private void saveCategoryRecursively(CreateCategoriesRequest request, Category parent, List<Category> collector) {
     Category category = Category.builder()
         .name(request.name())
-        .parentId(parent)
+        .parent(parent)
         .build();
 
     categoryRepository.save(category);
@@ -75,8 +74,8 @@ public class CategoryServiceImpl implements CategoryService {
     for (Category c : allCategories) {
       CreateCategoriesResponse current = map.get(c.getId());
 
-      if (c.getParentId() != null) {
-        CreateCategoriesResponse parent = map.get(c.getParentId().getId());
+      if (c.getParent() != null) {
+        CreateCategoriesResponse parent = map.get(c.getParent().getId());
         parent.getChildren().add(current);
       } else {
         roots.add(current);
@@ -97,8 +96,8 @@ public class CategoryServiceImpl implements CategoryService {
     for (Category c : all) {
       DeleteCategoryResponse current = map.get(c.getId());
 
-      if (c.getParentId() != null) {
-        DeleteCategoryResponse parent = map.get(c.getParentId().getId());
+      if (c.getParent() != null) {
+        DeleteCategoryResponse parent = map.get(c.getParent().getId());
         parent.getChildren().add(current);
       } else {
         roots.add(current);
@@ -128,8 +127,8 @@ public class CategoryServiceImpl implements CategoryService {
     GetCategoryResponse dto = GetCategoryResponse.of(root);
 
     for (Category candidate : all) {
-      if (candidate.getParentId() != null &&
-          candidate.getParentId().getId().equals(root.getId())) {
+      if (candidate.getParent() != null &&
+          candidate.getParent().getId().equals(root.getId())) {
         dto.getChildren().add(buildSubTree(candidate, all));
       }
     }
@@ -145,13 +144,13 @@ public class CategoryServiceImpl implements CategoryService {
       return true;
     }
 
-    return isDescendant(category, possibleParent.getParentId());
+    return isDescendant(category, possibleParent.getParent());
   }
 
   private void collectAllDescendants(Category parent, List<Category> all, List<Category> result) {
     for (Category candidate : all) {
-      if (candidate.getParentId() != null &&
-          candidate.getParentId().getId().equals(parent.getId())) {
+      if (candidate.getParent() != null &&
+          candidate.getParent().getId().equals(parent.getId())) {
         result.add(candidate);
         collectAllDescendants(candidate, all, result);
       }
@@ -167,7 +166,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     Category category = Category.builder()
         .name(request.name())
-        .parentId(parent)
+        .parent(parent)
         .build();
 
     Category saved = categoryRepository.save(category);
@@ -199,8 +198,8 @@ public class CategoryServiceImpl implements CategoryService {
 
   @Transactional(readOnly = true)
   @Override
-  public GetCategoryResponse getCategory(GetCategoryRequest request) {
-    Category root = findCategoryByName(request.name());
+  public GetCategoryResponse getCategory(String name) {
+    Category root = findCategoryByName(name);
 
     List<Category> all = categoryRepository.findAll();
 

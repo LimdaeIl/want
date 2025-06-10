@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -29,8 +30,10 @@ public class ProductCategory extends BaseEntity {
   private UUID id;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "category_id")
   private Category category;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "product_id")
   private Product product;
 }

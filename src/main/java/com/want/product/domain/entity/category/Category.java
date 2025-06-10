@@ -36,10 +36,10 @@ public class Category extends BaseEntity {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "parent_id")
-  private Category parentId;
+  private Category parent;
 
   @Builder.Default
-  @OneToMany(mappedBy = "parentId", fetch = FetchType.LAZY)
+  @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
   private List<Category> children = new ArrayList<>();
 
   @Builder.Default
@@ -57,6 +57,6 @@ public class Category extends BaseEntity {
   }
 
   public void changeParent(Category newParent) {
-    this.parentId = newParent;
+    this.parent = newParent;
   }
 }

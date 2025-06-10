@@ -25,7 +25,7 @@ public class CreateCategoriesResponse {
     return CreateCategoriesResponse.builder()
         .id(category.getId())
         .name(category.getName())
-        .parentId(category.getParentId() != null ? category.getParentId().getId() : null)
+        .parentId(category.getParent() != null ? category.getParent().getId() : null)
         .deletedAt(category.getDeletedAt())
         .deletedBy(category.getDeletedBy())
         .children(new ArrayList<>())

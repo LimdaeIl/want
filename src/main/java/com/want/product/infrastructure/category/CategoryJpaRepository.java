@@ -16,7 +16,7 @@ public interface CategoryJpaRepository extends JpaRepository<Category, UUID>, Ca
 
   Optional<Category> findCategoryById(UUID id);
 
-  @Query("SELECT c FROM Category c LEFT JOIN FETCH c.children WHERE c.parentId IS NULL")
+  @Query("SELECT c FROM Category c LEFT JOIN FETCH c.children WHERE c.parent IS NULL")
   List<Category> findAllByParentIdIsNullFetchChildren();
 
   @Query("SELECT c.name FROM Category c WHERE c.name IN :names")
