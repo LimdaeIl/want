@@ -1,0 +1,78 @@
+@env=dev
+
+### 로그인
+POST http://localhost:{{SERVER_PORT}}/api/v1/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "test1234!"
+}
+
+> {%
+    client.global.set("at", response.body.data.accessToken);
+%}
+
+### 카테고리 단 건 생성
+POST http://localhost:{{SERVER_PORT}}/api/v1/products/category/
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "name": "",
+  "parentId": ""
+}
+
+### 카테고리 여러 건 생성
+POST http://localhost:{{SERVER_PORT}}/api/v1/products/category/tree
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+[
+  {
+    "name": "남자",
+    "children": [
+      {
+        "name": "상의",
+        "children": [
+          {
+            "name": "셔츠",
+            "children": [
+              { "name": "체크" },
+              { "name": "옥스퍼드" },
+              { "name": "베이직" }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]
+
+### 카테고리 조회
+GET http://localhost:{{SERVER_PORT}}/api/v1/products/category
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "name": "남자"
+}
+
+
+### 카테고리 수정
+PATCH http://localhost:{{SERVER_PORT}}/api/v1/products/category/9752b2ff-7fd6-4717-8db2-556b6c10e330
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "newName": "수정된 상의",
+  "newParentId": "d9440dd8-3aca-4ab7-81f9-73c7c883c174"
+}
+
+
+### 카테고리 삭제
+DELETE http://localhost:{{SERVER_PORT}}/api/v1/products/category/de31496e-568d-4ca5-a230-316ee9a766f0
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{}
