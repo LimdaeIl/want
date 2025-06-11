@@ -5,11 +5,15 @@ import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.company.domain.entity.Company;
 import com.want.company.domain.repository.CompanyRepository;
 import com.want.product.application.productPolicy.dto.request.CreateProductPolicyRequest;
+import com.want.product.application.productPolicy.dto.request.UpdateProductPolicyRequest;
 import com.want.product.application.productPolicy.dto.response.CreateProductPolicyResponse;
+import com.want.product.application.productPolicy.dto.response.GetProductPolicyResponse;
+import com.want.product.application.productPolicy.dto.response.UpdateProductPolicyResponse;
 import com.want.product.domain.entity.productPolicy.ProductPolicy;
 import com.want.product.domain.entity.productPolicy.ProductPolicyErrorCode;
 import com.want.product.domain.repository.ProductPolicyRepository;
 import com.want.product.domain.repository.ProductRepository;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,8 +30,13 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
     if (productPolicyRepository.existsFindProductPolicyByName(name)) {
       throw new CustomException(ProductPolicyErrorCode.POLICY_NAME_DUPLICATE);
     }
-
   }
+
+  private ProductPolicy findById(UUID id) {
+    return productPolicyRepository.findById(id)
+        .orElseThrow(() -> new CustomException(ProductPolicyErrorCode.POLICY_NAME_NOT_FOUND));
+  }
+
 
   @Transactional
   @Override
@@ -55,5 +64,36 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
     ProductPolicy saveProductPolicy = productPolicyRepository.save(productPolicy);
 
     return CreateProductPolicyResponse.from(saveProductPolicy);
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public GetProductPolicyResponse getProductPolicy(UUID id) {
+    ProductPolicy byId = findById(id);
+
+    return GetProductPolicyResponse.from(byId);
+  }
+
+  @Transactional
+  @Override
+  public UpdateProductPolicyResponse updateProductPolicy(
+      CustomUserDetails userDetails,
+      UpdateProductPolicyRequest request,
+      UUID id) {
+    existsFindProductPolicyByName(request.newName());
+    ProductPolicy byId = findById(id);
+
+    byId.updateName(request.newName());
+    byId.updateDescription(request.newDescription());
+    byId.updateDiscountType(request.newDiscountType());
+    byId.updateValue(request.newValue());
+    byId.updateStartedAt(request.newStartedAt());
+    byId.updateEndedAt(request.newEndedAt());
+    byId.updateIsActive(request.newIsActive());
+    byId.updateMinPurchaseAmount(request.newMinPurchaseAmount());
+
+    ProductPolicy saveProductPolicy = productPolicyRepository.save(byId);
+
+    return UpdateProductPolicyResponse.from(saveProductPolicy);
   }
 }

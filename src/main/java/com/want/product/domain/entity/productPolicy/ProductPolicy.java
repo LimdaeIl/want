@@ -1,6 +1,7 @@
 package com.want.product.domain.entity.productPolicy;
 
 import com.want.common.audit.BaseEntity;
+import com.want.common.exception.CustomException;
 import com.want.company.domain.entity.Company;
 import com.want.product.domain.entity.product.Product;
 import jakarta.persistence.Column;
@@ -82,6 +83,76 @@ public class ProductPolicy extends BaseEntity {
     this.company = company;
   }
 
+  public void updateName(String name) {
+    if (name == null || name.isEmpty()) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_NAME_BLANK);
+    }
+    this.name = name;
+  }
 
+  public void updateDescription(String description) {
+    if (description == null || description.isEmpty()) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_DESCRIPTION_BLANK);
+    }
+    this.description = description;
+  }
 
+  public void updateDiscountType(DiscountType discountType) {
+    this.discountType = discountType;
+  }
+
+  public void updateValue(Integer value) {
+    if (value == null) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_BLANK);
+    }
+
+    if (value < 0) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_NEGATIVE);
+    }
+
+    if (value > 100) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_INVALID);
+    }
+
+    this.value = value;
+  }
+
+  public void updateStartedAt(LocalDateTime startedAt) {
+    if (startedAt == null) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_STARTED_AT_BLANK);
+    }
+
+    LocalDateTime now = LocalDateTime.now();
+
+    if (startedAt.isBefore(now)) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_START_DATE_IN_PAST);
+    }
+    this.startedAt = startedAt;
+  }
+
+  public void updateEndedAt(LocalDateTime endedAt) {
+    if (endedAt == null) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_ENDED_AT_BLANK);
+    }
+
+    if (endedAt.isBefore(startedAt)) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_DATE_INVALID);
+    }
+
+    this.endedAt = endedAt;
+  }
+
+  public void updateIsActive(Boolean isActive) {
+    this.isActive = isActive;
+  }
+
+  public void updateMinPurchaseAmount(Integer minPurchaseAmount) {
+    if (minPurchaseAmount == null) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_MIN_PURCHASE_AMOUNT_BLANK);
+    }
+    if (minPurchaseAmount < 0) {
+      throw new CustomException(ProductPolicyErrorCode.POLICY_MIN_PURCHASE_AMOUNT_NEGATIVE);
+    }
+    this.minPurchaseAmount = minPurchaseAmount;
+  }
 }

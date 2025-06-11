@@ -1,6 +1,5 @@
 package com.want.product.application.productPolicy.dto.response;
 
-import com.want.company.domain.entity.Company;
 import com.want.product.domain.entity.productPolicy.DiscountType;
 import com.want.product.domain.entity.productPolicy.ProductPolicy;
 import java.time.LocalDateTime;
@@ -9,7 +8,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 
 @Builder(access = AccessLevel.PRIVATE)
-public record CreateProductPolicyResponse(
+public record UpdateProductPolicyResponse(
     UUID id,
     String name,
     String description,
@@ -19,12 +18,16 @@ public record CreateProductPolicyResponse(
     LocalDateTime endedAt,
     boolean isActive,
     Integer minPurchaseAmount,
-    AssignCompany assignCompany
-    ) {
-  public static CreateProductPolicyResponse from(ProductPolicy productPolicy) {
-    return CreateProductPolicyResponse.builder()
+    LocalDateTime createdAt,
+    Long createdBy,
+    LocalDateTime updatedAt,
+    Long updatedBy,
+    LocalDateTime deletedAt,
+    Long deletedBy
+) {
+  public static UpdateProductPolicyResponse from(ProductPolicy productPolicy) {
+    return UpdateProductPolicyResponse.builder()
         .id(productPolicy.getId())
-        .assignCompany(AssignCompany.from(productPolicy.getCompany()))
         .name(productPolicy.getName())
         .description(productPolicy.getDescription())
         .discountType(productPolicy.getDiscountType())
@@ -33,22 +36,12 @@ public record CreateProductPolicyResponse(
         .endedAt(productPolicy.getEndedAt())
         .isActive(productPolicy.getIsActive())
         .minPurchaseAmount(productPolicy.getMinPurchaseAmount())
+        .createdAt(productPolicy.getCreatedAt())
+        .createdBy(productPolicy.getCreatedBy())
+        .updatedAt(productPolicy.getUpdatedAt())
+        .updatedBy(productPolicy.getUpdatedBy())
+        .deletedAt(productPolicy.getDeletedAt())
+        .deletedBy(productPolicy.getDeletedBy())
         .build();
   }
-
-  @Builder(access = AccessLevel.PRIVATE)
-  private record AssignCompany(
-      UUID id,
-      String name
-  ) {
-
-    private static AssignCompany from(Company company) {
-      return AssignCompany.builder()
-          .id(company.getId())
-          .name(company.getName())
-          .build();
-    }
-  }
-
-
 }
