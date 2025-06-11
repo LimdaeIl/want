@@ -31,7 +31,7 @@ public class CompanyServiceImpl implements CompanyService {
   }
 
   private Company findCompanyById(UUID id) {
-    return companyRepository.findCompanyById(id)
+    return companyRepository.findById(id)
         .orElseThrow(() -> new CustomException(CompanyErrorCode.COMPANY_NOT_FOUND));
   }
 

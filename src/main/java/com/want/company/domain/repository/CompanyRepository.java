@@ -7,7 +7,7 @@ import java.util.UUID;
 public interface CompanyRepository {
   Optional<Company> findCompanyByName(String name);
 
-  Optional<Company> findCompanyById(UUID id);
+  Optional<Company> findById(UUID id);
 
   Company save(Company company);
 

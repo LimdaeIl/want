@@ -48,6 +48,4 @@ public class Company extends BaseEntity {
     this.products.add(product);
     product.registerCompany(this);
   }
-
-
 }
