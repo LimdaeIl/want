@@ -26,15 +26,15 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
   private final CompanyRepository companyRepository;
   private final ProductRepository productRepository;
 
-  private void existsFindProductPolicyByName(String name) {
-    if (productPolicyRepository.existsFindProductPolicyByName(name)) {
+  private void existsFindProductPolicyByName(String newName) {
+    if (productPolicyRepository.existsFindProductPolicyByName(newName)) {
       throw new CustomException(ProductPolicyErrorCode.POLICY_NAME_DUPLICATE);
     }
   }
 
   private ProductPolicy findById(UUID id) {
     return productPolicyRepository.findById(id)
-        .orElseThrow(() -> new CustomException(ProductPolicyErrorCode.POLICY_NAME_NOT_FOUND));
+        .orElseThrow(() -> new CustomException(ProductPolicyErrorCode.POLICY_ID_NOT_FOUND));
   }
 
 

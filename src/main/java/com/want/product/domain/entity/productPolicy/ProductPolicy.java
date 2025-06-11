@@ -105,15 +105,7 @@ public class ProductPolicy extends BaseEntity {
     if (value == null) {
       throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_BLANK);
     }
-
-    if (value < 0) {
-      throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_NEGATIVE);
-    }
-
-    if (value > 100) {
-      throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_INVALID);
-    }
-
+    this.discountType.validateValue(value);
     this.value = value;
   }
 
