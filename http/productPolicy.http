@@ -53,7 +53,7 @@ Authorization: Bearer {{at}}
     client.global.set("companyId", response.body.data.id);
 %}
 
-### 상품 등록
+### 상품정책 등록
 POST http://localhost:{{SERVER_PORT}}/api/v1/products/policies
 Content-Type: application/json
 Authorization: Bearer {{at}}
@@ -68,4 +68,35 @@ Authorization: Bearer {{at}}
   "endedAt": "2025-06-20T16:05:30.96040",
   "isActive": false,
   "minPurchaseAmount": 0
+}
+
+> {%
+    client.global.set("id", response.body.data.id);
+%}
+
+### 상품정책 단 건 조회
+GET http://localhost:{{SERVER_PORT}}/api/v1/products/policies/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{}
+
+> {%
+    client.global.set("id", response.body.data.id);
+%}
+
+### 상품정책 수정
+PATCH http://localhost:{{SERVER_PORT}}/api/v1/products/policies/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "newName": "수정된 상품정책 이름11",
+  "newDescription": "수정된 상품정책 내용",
+  "newDiscountType": "REGULAR",
+  "newValue": 0,
+  "newStartedAt": "2025-06-11T16:05:30.96040",
+  "newEndedAt": "2025-06-20T16:05:30.96040",
+  "newIsActive": true,
+  "newMinPurchaseAmount": 0
 }
