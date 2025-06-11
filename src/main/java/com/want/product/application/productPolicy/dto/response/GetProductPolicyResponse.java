@@ -1,7 +1,6 @@
 package com.want.product.application.productPolicy.dto.response;
 
 import com.want.company.domain.entity.Company;
-import com.want.product.domain.entity.category.Category;
 import com.want.product.domain.entity.product.Product;
 import com.want.product.domain.entity.product.SaleStatus;
 import com.want.product.domain.entity.productPolicy.DiscountType;
@@ -61,6 +60,10 @@ public record GetProductPolicyResponse(
   ) {
 
     private static AssignCompany from(Company company) {
+      if (company == null) {
+        return null;
+      }
+
       return AssignCompany.builder()
           .id(company.getId())
           .name(company.getName())
@@ -71,23 +74,21 @@ public record GetProductPolicyResponse(
   @Builder(access = AccessLevel.PRIVATE)
   private record ApplyProducts(
       UUID id,
-      Category category,
-      Company company,
-      ProductPolicy productPolicy,
       String name,
       Integer price,
       Integer quantity,
       String thumbnail,
       SaleStatus saleStatus,
-      String description
+      String description,
+      UUID companyId,
+      UUID categoryId
   ) {
     private static List<ApplyProducts> from(List<Product> products) {
       return products.stream()
           .map(product -> ApplyProducts.builder()
               .id(product.getId())
-              .category(product.getCategory())
-              .company(product.getCompany())
-              .productPolicy(product.getProductPolicy())
+              .categoryId(product.getCategory().getId())
+              .companyId(product.getCompany().getId())
               .name(product.getName())
               .price(product.getPrice())
               .quantity(product.getQuantity())
