@@ -13,8 +13,6 @@ import java.util.UUID;
 
 public record CreateProductPolicyRequest(
 
-    List<UUID> productIds,
-
     @NotNull(message = "회사 ID는 필수입니다.")
     UUID companyId,
 

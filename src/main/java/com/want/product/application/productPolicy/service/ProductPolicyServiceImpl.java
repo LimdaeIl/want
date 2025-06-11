@@ -6,12 +6,10 @@ import com.want.company.domain.entity.Company;
 import com.want.company.domain.repository.CompanyRepository;
 import com.want.product.application.productPolicy.dto.request.CreateProductPolicyRequest;
 import com.want.product.application.productPolicy.dto.response.CreateProductPolicyResponse;
-import com.want.product.domain.entity.product.Product;
 import com.want.product.domain.entity.productPolicy.ProductPolicy;
 import com.want.product.domain.entity.productPolicy.ProductPolicyErrorCode;
 import com.want.product.domain.repository.ProductPolicyRepository;
 import com.want.product.domain.repository.ProductRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,14 +38,7 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
     Company company = companyRepository.findCompanyById(request.companyId())
         .orElseThrow(() -> new CustomException(ProductPolicyErrorCode.POLICY_APPLY_TARGET_NOT_FOUND));
 
-    List<Product> products = productRepository.findAllByIdIn(request.productIds());
-
-    if (products.size() != request.productIds().size()) {
-      throw new CustomException(ProductPolicyErrorCode.POLICY_APPLY_TARGET_NOT_FOUND);
-    }
-
     ProductPolicy productPolicy = ProductPolicy.builder()
-        .products(products)
         .company(company)
         .name(request.name())
         .description(request.description())
