@@ -19,7 +19,7 @@ Content-Type: application/json
 Authorization: Bearer {{at}}
 
 {
-  "name": "",
+  "name": "연습용 카테고리",
   "parentId": ""
 }
 
