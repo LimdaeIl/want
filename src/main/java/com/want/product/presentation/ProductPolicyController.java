@@ -5,6 +5,7 @@ import com.want.common.response.ApiResponse;
 import com.want.product.application.productPolicy.dto.request.CreateProductPolicyRequest;
 import com.want.product.application.productPolicy.dto.request.UpdateProductPolicyRequest;
 import com.want.product.application.productPolicy.dto.response.CreateProductPolicyResponse;
+import com.want.product.application.productPolicy.dto.response.DeleteProductPolicyResponse;
 import com.want.product.application.productPolicy.dto.response.GetProductPolicyResponse;
 import com.want.product.application.productPolicy.dto.response.UpdateProductPolicyResponse;
 import com.want.product.application.productPolicy.service.ProductPolicyService;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -81,6 +83,22 @@ public class ProductPolicyController {
         );
   }
 
+
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER')")
+  @DeleteMapping("/{id}")
+  public ResponseEntity<ApiResponse<DeleteProductPolicyResponse>> deleteProductPolicy(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable UUID id) {
+    DeleteProductPolicyResponse response = productPolicyService.deleteProductPolicy(userDetails, id);
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                ProductPolicySuccessCode.POLICY_UPDATED.getCode(),
+                ProductPolicySuccessCode.POLICY_UPDATED.getMessage(),
+                response
+            )
+        );
+  }
 
 
 }
