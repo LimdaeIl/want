@@ -54,7 +54,7 @@ public class ProductPolicyController {
       @PathVariable UUID id) {
     GetProductPolicyResponse response = productPolicyService.getProductPolicy(id);
     return ResponseEntity
-        .status(HttpStatus.CREATED)
+        .status(HttpStatus.OK)
         .body(new ApiResponse<>(
                 ProductPolicySuccessCode.POLICY_FETCHED.getCode(),
                 ProductPolicySuccessCode.POLICY_FETCHED.getMessage(),
@@ -72,7 +72,7 @@ public class ProductPolicyController {
       @PathVariable UUID id) {
     UpdateProductPolicyResponse response = productPolicyService.updateProductPolicy(userDetails, request, id);
     return ResponseEntity
-        .status(HttpStatus.CREATED)
+        .status(HttpStatus.OK)
         .body(new ApiResponse<>(
                 ProductPolicySuccessCode.POLICY_UPDATED.getCode(),
                 ProductPolicySuccessCode.POLICY_UPDATED.getMessage(),
