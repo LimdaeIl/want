@@ -38,4 +38,16 @@ public class Company extends BaseEntity {
 
   @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
   private List<ProductPolicy> productPolicies = new ArrayList<>();
+
+  public void addProductPolicy(ProductPolicy productPolicy) {
+    this.productPolicies.add(productPolicy);
+    productPolicy.assignCompany(this);
+  }
+
+  public void addProduct(Product product) {
+    this.products.add(product);
+    product.registerCompany(this);
+  }
+
+
 }

@@ -3,12 +3,12 @@ package com.want.product.application.productPolicy.dto.request;
 import com.want.product.domain.entity.productPolicy.DiscountType;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 public record CreateProductPolicyRequest(
@@ -28,6 +28,7 @@ public record CreateProductPolicyRequest(
 
     @NotNull(message = "할인 값은 필수입니다.")
     @Min(value = 0, message = "할인 값은 0 이상이어야 합니다.")
+    @Max(value = 100, message = "할인 값은 100 이하이어야 합니다.")
     Integer value,
 
     @NotNull(message = "시작일시는 필수입니다.")

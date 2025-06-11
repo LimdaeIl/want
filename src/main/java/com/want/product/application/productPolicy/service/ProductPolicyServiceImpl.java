@@ -24,7 +24,7 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
 
   private void existsFindProductPolicyByName(String name) {
     if (productPolicyRepository.existsFindProductPolicyByName(name)) {
-      throw new CustomException(ProductPolicyErrorCode.POLICY_NAME_NOT_FOUND);
+      throw new CustomException(ProductPolicyErrorCode.POLICY_NAME_DUPLICATE);
     }
 
   }
@@ -49,6 +49,8 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
         .isActive(request.isActive())
         .minPurchaseAmount(request.minPurchaseAmount())
         .build();
+
+    company.addProductPolicy(productPolicy);
 
     ProductPolicy saveProductPolicy = productPolicyRepository.save(productPolicy);
 

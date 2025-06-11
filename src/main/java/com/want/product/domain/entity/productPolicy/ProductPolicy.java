@@ -72,4 +72,16 @@ public class ProductPolicy extends BaseEntity {
         && now.isAfter(startedAt)
         && now.isBefore(endedAt);
   }
+
+  public void addProduct(Product product) {
+    this.products.add(product);
+    product.applyProductPolicy(this);
+  }
+
+  public void assignCompany(Company company) {
+    this.company = company;
+  }
+
+
+
 }

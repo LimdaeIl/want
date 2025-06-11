@@ -64,5 +64,11 @@ public class Product extends BaseEntity {
   @Column(name = "description", nullable = false)
   private String description;
 
+  public void registerCompany(Company company) {
+    this.company = company;
+  }
 
+  public void applyProductPolicy(ProductPolicy productPolicy) {
+    this.productPolicy = productPolicy;
+  }
 }
