@@ -45,7 +45,7 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
                                                          CreateProductPolicyRequest request) {
     existsFindProductPolicyByName(request.name());
 
-    Company company = companyRepository.findCompanyById(request.companyId())
+    Company company = companyRepository.findById(request.companyId())
         .orElseThrow(() -> new CustomException(ProductPolicyErrorCode.POLICY_APPLY_TARGET_NOT_FOUND));
 
     ProductPolicy productPolicy = ProductPolicy.builder()

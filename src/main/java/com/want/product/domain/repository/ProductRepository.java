@@ -8,4 +8,5 @@ public interface ProductRepository {
 
   List<Product> findAllByIdIn(List<UUID> ids);
 
+  Product save(Product product);
 }

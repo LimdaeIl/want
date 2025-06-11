@@ -58,4 +58,9 @@ public class Category extends BaseEntity {
   public void changeParent(Category newParent) {
     this.parent = newParent;
   }
+
+  public void addProduct(Product product) {
+    this.products.add(product);
+    product.applyCategory(this);
+  }
 }
