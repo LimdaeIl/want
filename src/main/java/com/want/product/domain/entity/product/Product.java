@@ -3,6 +3,7 @@ package com.want.product.domain.entity.product;
 
 import com.want.common.audit.BaseEntity;
 import com.want.company.domain.entity.Company;
+import com.want.product.domain.entity.category.Category;
 import com.want.product.domain.entity.productPolicy.ProductPolicy;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,11 +13,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -34,14 +33,17 @@ public class Product extends BaseEntity {
   @Id
   private UUID id;
 
-  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-  private List<ProductCategory> productCategories = new ArrayList<>();
-
-  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-  private List<ProductPolicy> productPolicies = new ArrayList<>();
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "category_id")
+  private Category category;
 
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "company_id")
   private Company company;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "product_policy_id")
+  private ProductPolicy productPolicy;
 
   @Column(name = "name", nullable = false)
   private String name;
@@ -62,4 +64,11 @@ public class Product extends BaseEntity {
   @Column(name = "description", nullable = false)
   private String description;
 
+  public void registerCompany(Company company) {
+    this.company = company;
+  }
+
+  public void applyProductPolicy(ProductPolicy productPolicy) {
+    this.productPolicy = productPolicy;
+  }
 }

@@ -2,6 +2,7 @@ package com.want.company.domain.entity;
 
 import com.want.common.audit.BaseEntity;
 import com.want.product.domain.entity.product.Product;
+import com.want.product.domain.entity.productPolicy.ProductPolicy;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,4 +35,19 @@ public class Company extends BaseEntity {
 
   @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
   private List<Product> products = new ArrayList<>();
+
+  @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
+  private List<ProductPolicy> productPolicies = new ArrayList<>();
+
+  public void addProductPolicy(ProductPolicy productPolicy) {
+    this.productPolicies.add(productPolicy);
+    productPolicy.assignCompany(this);
+  }
+
+  public void addProduct(Product product) {
+    this.products.add(product);
+    product.registerCompany(this);
+  }
+
+
 }

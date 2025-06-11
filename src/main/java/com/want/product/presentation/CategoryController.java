@@ -4,7 +4,6 @@ import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.common.response.ApiResponse;
 import com.want.product.application.category.dto.request.CreateCategoriesRequest;
 import com.want.product.application.category.dto.request.CreateCategoryRequest;
-import com.want.product.application.category.dto.request.GetCategoryRequest;
 import com.want.product.application.category.dto.request.UpdateCategoryRequest;
 import com.want.product.application.category.dto.response.CreateCategoriesResponse;
 import com.want.product.application.category.dto.response.CreateCategoryResponse;
@@ -30,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/products/category")
+@RequestMapping("/api/v1/products/categories")
 @RestController
 public class CategoryController {
 
@@ -74,7 +73,7 @@ public class CategoryController {
   @GetMapping("{name}")
   public ResponseEntity<ApiResponse<GetCategoryResponse>> getCategory(
       @PathVariable String name
-      ) {
+  ) {
     GetCategoryResponse response = categoryService.getCategory(name);
 
     return ResponseEntity

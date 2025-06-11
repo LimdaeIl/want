@@ -2,7 +2,7 @@ package com.want.product.domain.entity.category;
 
 import com.want.common.audit.BaseEntity;
 import com.want.common.exception.CustomException;
-import com.want.product.domain.entity.product.ProductCategory;
+import com.want.product.domain.entity.product.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -35,16 +35,15 @@ public class Category extends BaseEntity {
   private UUID id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "parent_id")
+  @JoinColumn(name = "parent")
   private Category parent;
 
   @Builder.Default
   @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
   private List<Category> children = new ArrayList<>();
 
-  @Builder.Default
   @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
-  private List<ProductCategory> productCategories = new ArrayList<>();
+  private List<Product> products = new ArrayList<>();
 
   @Column(name = "name", nullable = false, unique = true)
   private String name;
