@@ -9,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 public enum DiscountType {
   REGULAR("할인 없음") {
     @Override
-    public void validateValue(int value) {
+    public void validateValue(Integer value) {
+      if (value == null) {
+        throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_BLANK);
+      }
       if (value != 0) {
         throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_BLANK);
       }
@@ -17,7 +20,10 @@ public enum DiscountType {
   },
   FIXED("정액 할인") {
     @Override
-    public void validateValue(int value) {
+    public void validateValue(Integer value) {
+      if (value == null) {
+        throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_BLANK);
+      }
       if (value < 0) {
         throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_INVALID);
       }
@@ -25,7 +31,10 @@ public enum DiscountType {
   },
   PERCENTAGE("정률 할인") {
     @Override
-    public void validateValue(int value) {
+    public void validateValue(Integer value) {
+      if (value == null) {
+        throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_BLANK);
+      }
       if (value < 0 || value > 100) {
         throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_INVALID);
       }
@@ -34,5 +43,5 @@ public enum DiscountType {
 
   private final String description;
 
-  public abstract void validateValue(int value);
+  public abstract void validateValue(Integer value);
 }
