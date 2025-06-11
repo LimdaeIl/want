@@ -100,3 +100,10 @@ Authorization: Bearer {{at}}
   "newIsActive": true,
   "newMinPurchaseAmount": 0
 }
+
+### 상품정책 삭제
+DELETE http://localhost:{{SERVER_PORT}}/api/v1/products/policies/{{id}}
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{}

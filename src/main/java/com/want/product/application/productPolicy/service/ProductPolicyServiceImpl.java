@@ -7,6 +7,7 @@ import com.want.company.domain.repository.CompanyRepository;
 import com.want.product.application.productPolicy.dto.request.CreateProductPolicyRequest;
 import com.want.product.application.productPolicy.dto.request.UpdateProductPolicyRequest;
 import com.want.product.application.productPolicy.dto.response.CreateProductPolicyResponse;
+import com.want.product.application.productPolicy.dto.response.DeleteProductPolicyResponse;
 import com.want.product.application.productPolicy.dto.response.GetProductPolicyResponse;
 import com.want.product.application.productPolicy.dto.response.UpdateProductPolicyResponse;
 import com.want.product.domain.entity.productPolicy.ProductPolicy;
@@ -95,5 +96,15 @@ public class ProductPolicyServiceImpl implements ProductPolicyService {
     ProductPolicy saveProductPolicy = productPolicyRepository.save(byId);
 
     return UpdateProductPolicyResponse.from(saveProductPolicy);
+  }
+
+  @Transactional
+  @Override
+  public DeleteProductPolicyResponse deleteProductPolicy(CustomUserDetails userDetails, UUID id) {
+    ProductPolicy byId = findById(id);
+
+    byId.markDeleted(userDetails.id());
+
+    return DeleteProductPolicyResponse.from(byId);
   }
 }

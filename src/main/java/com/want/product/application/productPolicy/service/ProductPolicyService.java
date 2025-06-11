@@ -4,6 +4,7 @@ import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.product.application.productPolicy.dto.request.CreateProductPolicyRequest;
 import com.want.product.application.productPolicy.dto.request.UpdateProductPolicyRequest;
 import com.want.product.application.productPolicy.dto.response.CreateProductPolicyResponse;
+import com.want.product.application.productPolicy.dto.response.DeleteProductPolicyResponse;
 import com.want.product.application.productPolicy.dto.response.GetProductPolicyResponse;
 import com.want.product.application.productPolicy.dto.response.UpdateProductPolicyResponse;
 import jakarta.validation.Valid;
@@ -15,4 +16,6 @@ public interface ProductPolicyService {
   GetProductPolicyResponse getProductPolicy(UUID id);
 
   UpdateProductPolicyResponse updateProductPolicy(CustomUserDetails userDetails, UpdateProductPolicyRequest request, UUID id);
+
+  DeleteProductPolicyResponse deleteProductPolicy(CustomUserDetails userDetails, UUID id);
 }

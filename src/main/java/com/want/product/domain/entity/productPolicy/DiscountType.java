@@ -14,7 +14,7 @@ public enum DiscountType {
         throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_BLANK);
       }
       if (value != 0) {
-        throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_BLANK);
+        throw new CustomException(ProductPolicyErrorCode.POLICY_VALUE_INVALID);
       }
     }
   },
