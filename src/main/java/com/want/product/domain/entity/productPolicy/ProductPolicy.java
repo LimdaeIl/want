@@ -1,6 +1,7 @@
 package com.want.product.domain.entity.productPolicy;
 
 import com.want.common.audit.BaseEntity;
+import com.want.company.domain.entity.Company;
 import com.want.product.domain.entity.product.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,8 +11,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -27,13 +31,17 @@ public class ProductPolicy extends BaseEntity {
 
   @GeneratedValue(strategy = GenerationType.UUID)
   @Id
+  @Column(name = "id", nullable = false, updatable = false, unique = true)
   private UUID id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "product_id", nullable = false)
-  private Product product;
+  @OneToMany(mappedBy = "productPolicy", fetch = FetchType.LAZY)
+  private List<Product> products = new ArrayList<>();
 
-  @Column(name = "name", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "company_id", nullable = false)
+  private Company company;
+
+  @Column(name = "name", nullable = false, unique = true)
   private String name;
 
   @Column(name = "description", nullable = false)
@@ -54,11 +62,8 @@ public class ProductPolicy extends BaseEntity {
   @Column(name = "is_active", nullable = false)
   private Boolean isActive;
 
-  @Column(name = "min_purchase_amount")
+  @Column(name = "min_purchase_amount", nullable = false)
   private Integer minPurchaseAmount;
-
-  @Column(name = "stackable_with_coupon")
-  private Boolean stackableWithCoupon;
 
   public boolean isCurrentlyActive() {
     LocalDateTime now = LocalDateTime.now();
@@ -67,5 +72,4 @@ public class ProductPolicy extends BaseEntity {
         && now.isAfter(startedAt)
         && now.isBefore(endedAt);
   }
-
 }
