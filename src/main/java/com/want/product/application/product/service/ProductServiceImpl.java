@@ -41,9 +41,17 @@ public class ProductServiceImpl implements ProductService {
         .orElseThrow(() -> new CustomException(ProductErrorCode.PRODUCT_COMPANY_NOT_FOUND));
   }
 
+  private void existsByName(String name) {
+    if (productRepository.existsByName(name)) {
+      throw new CustomException(ProductErrorCode.PRODUCT_NAME_DUPLICATE);
+    }
+  }
+
   @Transactional
   @Override
   public CreateProductResponse createProduct(CreateProductRequest request) {
+    existsByName(request.name());
+
     Company companyById = findCompanyById(request.companyId());
     Category categoryById = findCategoryById(request.categoryId());
     ProductPolicy productPolicyById = findProductPolicyById(request.productPolicyId());
