@@ -9,6 +9,7 @@ import com.want.product.application.product.dto.request.CreateProductRequest;
 import com.want.product.application.product.dto.request.ProductSearchCondition;
 import com.want.product.application.product.dto.request.UpdateProductRequest;
 import com.want.product.application.product.dto.response.CreateProductResponse;
+import com.want.product.application.product.dto.response.DeleteProductResponse;
 import com.want.product.application.product.dto.response.FlatProductDto;
 import com.want.product.application.product.dto.response.GetProductResponse;
 import com.want.product.application.product.dto.response.GetProductsResponse;
@@ -138,6 +139,17 @@ public class ProductServiceImpl implements ProductService {
     Product saveProduct = productRepository.save(byId);
 
     return UpdateProductResponse.from(saveProduct);
+  }
+
+  @Transactional
+  @Override
+  public DeleteProductResponse deleteProduct(CustomUserDetails userDetails, UUID id) {
+    Product byId = findById(id);
+
+    byId.markDeleted(userDetails.id());
+    Product saveProduct = productRepository.save(byId);
+
+    return DeleteProductResponse.from(saveProduct);
   }
 
 
