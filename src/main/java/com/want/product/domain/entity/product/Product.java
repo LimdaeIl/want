@@ -2,6 +2,7 @@ package com.want.product.domain.entity.product;
 
 
 import com.want.common.audit.BaseEntity;
+import com.want.common.exception.CustomException;
 import com.want.company.domain.entity.Company;
 import com.want.product.domain.entity.category.Category;
 import com.want.product.domain.entity.productPolicy.ProductPolicy;
@@ -76,4 +77,41 @@ public class Product extends BaseEntity {
     this.category = category;
   }
 
+  public void updateName(String name) {
+    if (name == null || name.isEmpty()) {
+      throw new CustomException(ProductErrorCode.PRODUCT_NAME_BLANK);
+    }
+
+    this.name = name;
+  }
+
+  public void updatePrice(Integer price) {
+    if (price == null || price < 0) {
+      throw new CustomException(ProductErrorCode.PRODUCT_PRICE_INVALID);
+    }
+
+    this.price = price;
+  }
+
+  public void updateQuantity(Integer quantity) {
+    if (quantity == null || quantity < 0) {
+      throw new CustomException(ProductErrorCode.PRODUCT_QUANTITY_INVALID);
+    }
+    this.quantity = quantity;
+  }
+
+  public void updateSaleStatus(SaleStatus saleStatus) {
+    this.saleStatus = saleStatus;
+  }
+
+  public void updateDescription(String description) {
+    if (description == null || description.isEmpty()) {
+      throw new CustomException(ProductErrorCode.PRODUCT_DESCRIPTION_BLANK);
+    }
+    this.description = description;
+  }
+
+  public void updateThumbnail(String thumbnail) {
+    this.thumbnail = thumbnail;
+  }
 }
