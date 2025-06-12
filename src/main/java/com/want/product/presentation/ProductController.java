@@ -54,7 +54,7 @@ public class ProductController {
     GetProductResponse response = productService.getProduct(userDetails, id);
 
     return ResponseEntity
-        .status(HttpStatus.CREATED)
+        .status(HttpStatus.OK)
         .body(new ApiResponse<>(
                 ProductSuccessCode.PRODUCT_FETCHED.getCode(),
                 ProductSuccessCode.PRODUCT_FETCHED.getMessage(),
