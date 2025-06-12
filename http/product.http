@@ -102,3 +102,10 @@ Content-Type: application/json
 Authorization: Bearer {{at}}
 
 {}
+
+### 상품 동적 검색
+GET http://localhost:{{SERVER_PORT}}/api/v1/products
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{}

@@ -1,15 +1,23 @@
 package com.want.product.presentation;
 
+import com.want.common.config.PagedResponse;
 import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.common.response.ApiResponse;
 import com.want.product.application.product.dto.request.CreateProductRequest;
+import com.want.product.application.product.dto.request.ProductSearchCondition;
 import com.want.product.application.product.dto.response.CreateProductResponse;
 import com.want.product.application.product.dto.response.GetProductResponse;
+import com.want.product.application.product.dto.response.GetProductsResponse;
 import com.want.product.application.product.service.ProductService;
 import com.want.product.domain.entity.product.ProductSuccessCode;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,6 +60,29 @@ public class ProductController {
       @PathVariable UUID id
   ) {
     GetProductResponse response = productService.getProduct(userDetails, id);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                ProductSuccessCode.PRODUCT_FETCHED.getCode(),
+                ProductSuccessCode.PRODUCT_FETCHED.getMessage(),
+                response
+            )
+        );
+  }
+
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER')")
+  @GetMapping
+  public ResponseEntity<ApiResponse<PagedResponse<GetProductsResponse>>> getProducts(
+      @ParameterObject ProductSearchCondition condition,
+      @PageableDefault(size = 10)
+      @SortDefault.SortDefaults({
+          @SortDefault(sort = "createdAt", direction = Direction.DESC),
+          @SortDefault(sort = "id", direction = Direction.DESC)
+      })
+      Pageable pageable
+  ) {
+    PagedResponse<GetProductsResponse> response = productService.getProducts(condition, pageable);
 
     return ResponseEntity
         .status(HttpStatus.OK)
