@@ -1,21 +1,27 @@
 package com.want.product.application.product.service;
 
+import com.want.common.config.PagedResponse;
 import com.want.common.exception.CustomException;
 import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.company.domain.entity.Company;
 import com.want.company.domain.repository.CompanyRepository;
 import com.want.product.application.product.dto.request.CreateProductRequest;
+import com.want.product.application.product.dto.request.ProductSearchCondition;
 import com.want.product.application.product.dto.response.CreateProductResponse;
 import com.want.product.application.product.dto.response.GetProductResponse;
+import com.want.product.application.product.dto.response.GetProductsResponse;
 import com.want.product.domain.entity.category.Category;
 import com.want.product.domain.entity.product.Product;
 import com.want.product.domain.entity.product.ProductErrorCode;
 import com.want.product.domain.entity.productPolicy.ProductPolicy;
 import com.want.product.domain.repository.CategoryRepository;
 import com.want.product.domain.repository.ProductPolicyRepository;
+import com.want.product.domain.repository.ProductQuerydslRepository;
 import com.want.product.domain.repository.ProductRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductServiceImpl implements ProductService {
 
   private final ProductRepository productRepository;
+  private final ProductQuerydslRepository productQuerydslRepository;
   private final ProductPolicyRepository productPolicyRepository;
   private final CategoryRepository categoryRepository;
   private final CompanyRepository companyRepository;
@@ -91,6 +98,15 @@ public class ProductServiceImpl implements ProductService {
     Product byId = findById(id);
 
     return GetProductResponse.from(byId);
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public PagedResponse<GetProductsResponse> getProducts(ProductSearchCondition condition, Pageable pageable) {
+    Page<GetProductsResponse> productsByCondition = productQuerydslRepository.findProductsByCondition(condition,
+        pageable);
+
+    return PagedResponse.from(productsByCondition);
   }
 
 
