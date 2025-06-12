@@ -64,7 +64,7 @@ Authorization: Bearer {{at}}
   "description": "연습용 상품정책 설명",
   "discountType": "REGULAR",
   "value": 1,
-  "startedAt": "2025-06-11T16:05:30.96040",
+  "startedAt": "2025-06-14T16:05:30.96040",
   "endedAt": "2025-06-20T16:05:30.96040",
   "isActive": false,
   "minPurchaseAmount": 0
@@ -91,3 +91,14 @@ Authorization: Bearer {{at}}
   "saleStatus": "ACTIVE",
   "description": "상품 등록 내용 1"
 }
+
+> {%
+    client.global.set("productId", response.body.data.id);
+%}
+
+### 상품 단 건 조회
+GET http://localhost:{{SERVER_PORT}}/api/v1/products/{{productId}}
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{}

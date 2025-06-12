@@ -1,10 +1,12 @@
 package com.want.product.application.product.service;
 
 import com.want.common.exception.CustomException;
+import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.company.domain.entity.Company;
 import com.want.company.domain.repository.CompanyRepository;
 import com.want.product.application.product.dto.request.CreateProductRequest;
 import com.want.product.application.product.dto.response.CreateProductResponse;
+import com.want.product.application.product.dto.response.GetProductResponse;
 import com.want.product.domain.entity.category.Category;
 import com.want.product.domain.entity.product.Product;
 import com.want.product.domain.entity.product.ProductErrorCode;
@@ -47,6 +49,11 @@ public class ProductServiceImpl implements ProductService {
     }
   }
 
+  private Product findById(UUID id) {
+    return productRepository.findById(id)
+        .orElseThrow(() -> new CustomException(ProductErrorCode.PRODUCT_ID_NOT_FOUND));
+  }
+
   @Transactional
   @Override
   public CreateProductResponse createProduct(CreateProductRequest request) {
@@ -76,4 +83,15 @@ public class ProductServiceImpl implements ProductService {
 
     return CreateProductResponse.from(saveProduct);
   }
+
+
+  @Transactional(readOnly = true)
+  @Override
+  public GetProductResponse getProduct(CustomUserDetails userDetails, UUID id) {
+    Product byId = findById(id);
+
+    return GetProductResponse.from(byId);
+  }
+
+
 }
