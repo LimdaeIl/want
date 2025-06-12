@@ -71,4 +71,9 @@ public class Product extends BaseEntity {
   public void applyProductPolicy(ProductPolicy productPolicy) {
     this.productPolicy = productPolicy;
   }
+
+  public void applyCategory(Category category) {
+    this.category = category;
+  }
+
 }

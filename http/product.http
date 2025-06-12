@@ -1,0 +1,93 @@
+@env=dev
+
+### 회원가입
+POST http://localhost:{{SERVER_PORT}}/api/v1/auth/signup
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "test1234!",
+  "name": "test",
+  "phone": "01012341234",
+  "profileImageUrl": "test.jpg"
+}
+
+
+### 로그인
+POST http://localhost:{{SERVER_PORT}}/api/v1/auth/sign-in
+Content-Type: application/json
+
+{
+  "email": "test@test.com",
+  "password": "test1234!"
+}
+
+> {%
+    client.global.set("at", response.body.data.accessToken);
+%}
+
+### 카테고리 단 건 생성
+POST http://localhost:{{SERVER_PORT}}/api/v1/products/categories
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "name": "연습용 카테고리",
+  "parentId": ""
+}
+
+> {%
+    client.global.set("categoryId", response.body.data.id);
+%}
+
+### 회사 등록
+POST http://localhost:{{SERVER_PORT}}/api/v1/companies
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "name": "새로운 회사"
+}
+
+> {%
+    client.global.set("companyId", response.body.data.id);
+%}
+
+### 상품정책 등록
+POST http://localhost:{{SERVER_PORT}}/api/v1/products/policies
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "companyId": "{{companyId}}",
+  "name": "연습용 상품정책 이름",
+  "description": "연습용 상품정책 설명",
+  "discountType": "REGULAR",
+  "value": 1,
+  "startedAt": "2025-06-11T16:05:30.96040",
+  "endedAt": "2025-06-20T16:05:30.96040",
+  "isActive": false,
+  "minPurchaseAmount": 0
+}
+
+> {%
+    client.global.set("productPolicyId", response.body.data.id);
+%}
+
+
+### 상품 등록
+POST http://localhost:{{SERVER_PORT}}/api/v1/products
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "categoryId": "{{categoryId}}",
+  "companyId": "{{companyId}}",
+  "productPolicyId": "{{productPolicyId}}",
+  "name": "상품 등록1",
+  "price": 1100,
+  "quantity": 100,
+  "thumbnail": "no",
+  "saleStatus": "ACTIVE",
+  "description": "상품 등록 내용 1"
+}

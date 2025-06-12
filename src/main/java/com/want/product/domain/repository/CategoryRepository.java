@@ -10,7 +10,7 @@ public interface CategoryRepository {
 
   boolean existsCategoryByName(String name);
 
-  Optional<Category> findCategoryById(UUID id);
+  Optional<Category> findById(UUID id);
 
   Optional<Category> findCategoryByName(String name);
 

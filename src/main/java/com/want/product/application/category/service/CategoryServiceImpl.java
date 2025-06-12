@@ -36,7 +36,7 @@ public class CategoryServiceImpl implements CategoryService {
   }
 
   private Category findCategoryById(UUID id) {
-    return categoryRepository.findCategoryById(id)
+    return categoryRepository.findById(id)
         .orElseThrow(() -> new CustomException(CategoryErrorCode.CATEGORY_NOT_FOUND));
   }
 
