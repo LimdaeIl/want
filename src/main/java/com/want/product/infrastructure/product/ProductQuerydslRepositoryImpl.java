@@ -11,10 +11,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.want.common.querydsl.QuerydslSortUtil;
 import com.want.product.application.product.dto.request.ProductSearchCondition;
 import com.want.product.application.product.dto.response.FlatProductDto;
-import com.want.product.application.product.dto.response.GetProductsResponse;
 import com.want.product.domain.entity.product.QProduct;
 import com.want.product.domain.repository.ProductQuerydslRepository;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +28,7 @@ public class ProductQuerydslRepositoryImpl implements ProductQuerydslRepository 
   private final JPAQueryFactory jpaQueryFactory;
 
   @Override
-  public Page<GetProductsResponse> findProductsByCondition(ProductSearchCondition condition, Pageable pageable) {
+  public Page<FlatProductDto> findProductsByCondition(ProductSearchCondition condition, Pageable pageable) {
     QProduct product = QProduct.product;
 
     BooleanBuilder where = new BooleanBuilder()
@@ -44,17 +42,20 @@ public class ProductQuerydslRepositoryImpl implements ProductQuerydslRepository 
         .and(eqIfNotNull(product.category.id, condition.categoryId()))
         .and(eqIfNotNull(product.company.id, condition.companyId()))
         .and(eqIfNotNull(product.productPolicy.id, condition.productPolicyId()))
-        .and(betweenIfNotNull(product.createdAt, toLocal(condition.createdFrom()), toLocal(condition.createdTo())))
-        .and(betweenIfNotNull(product.updatedAt, toLocal(condition.updatedFrom()), toLocal(condition.updatedTo())))
-        .and(betweenIfNotNull(product.deletedAt, toLocal(condition.deletedFrom()), toLocal(condition.deletedTo())))
+        .and(betweenIfNotNull(product.createdAt, condition.createdFrom(), condition.createdTo()))
+        .and(betweenIfNotNull(product.updatedAt, condition.updatedFrom(), condition.updatedTo()))
+        .and(betweenIfNotNull(product.deletedAt, condition.deletedFrom(), condition.deletedTo()))
         .and(condition.includeDeleted() != null && !condition.includeDeleted() ? product.deletedAt.isNull() : null)
         .and(eqIfNotNull(product.productPolicy.discountType, condition.discountType()))
         .and(eqIfNotNull(product.productPolicy.isActive, condition.isPolicyActive()))
         .and(betweenIfNotNull(product.productPolicy.value, condition.minPolicyValue(), condition.maxPolicyValue()))
-        .and(betweenIfNotNull(product.productPolicy.startedAt, condition.policyStartedFrom(),
+        .and(betweenIfNotNull(product.productPolicy.startedAt,
+            condition.policyStartedFrom(),
             condition.policyStartedTo()))
         .and(betweenIfNotNull(product.productPolicy.endedAt, condition.policyEndedFrom(), condition.policyEndedTo()))
-        .and(betweenIfNotNull(product.productPolicy.minPurchaseAmount, condition.minPurchaseAmount(), null)); // 이상 조건
+        .and(condition.minPurchaseAmount() != null
+            ? product.productPolicy.minPurchaseAmount.goe(condition.minPurchaseAmount())
+            : null);
 
     List<OrderSpecifier<?>> orderSpecifiers = QuerydslSortUtil.toOrderSpecifier(
         pageable.getSort(),
@@ -118,17 +119,13 @@ public class ProductQuerydslRepositoryImpl implements ProductQuerydslRepository 
     Long total = jpaQueryFactory
         .select(product.count())
         .from(product)
+        .leftJoin(product.category)
+        .leftJoin(product.company)
+        .leftJoin(product.productPolicy)
         .where(where)
         .fetchOne();
 
-    List<GetProductsResponse> products = flats.stream()
-        .map(GetProductsResponse::from)
-        .toList();
-
-    return new PageImpl<>(products, pageable, total != null ? total : 0);
+    return new PageImpl<>(flats, pageable, total != null ? total : 0);
   }
 
-  private static java.time.LocalDateTime toLocal(ZonedDateTime zonedDateTime) {
-    return zonedDateTime == null ? null : zonedDateTime.toLocalDateTime();
-  }
 }

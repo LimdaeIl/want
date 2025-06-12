@@ -22,12 +22,12 @@ public record ProductSearchCondition(
     UUID companyId,                // 회사 ID
     UUID productPolicyId,          // 상품 정책 ID
 
-    ZonedDateTime createdFrom,     // 생성일 범위 시작
-    ZonedDateTime createdTo,       // 생성일 범위 끝
-    ZonedDateTime updatedFrom,     // 수정일 범위 시작
-    ZonedDateTime updatedTo,       // 수정일 범위 끝
-    ZonedDateTime deletedFrom,     // 삭제일 범위 시작
-    ZonedDateTime deletedTo,       // 삭제일 범위 끝
+    LocalDateTime createdFrom,     // 생성일 범위 시작
+    LocalDateTime createdTo,       // 생성일 범위 끝
+    LocalDateTime updatedFrom,     // 수정일 범위 시작
+    LocalDateTime updatedTo,       // 수정일 범위 끝
+    LocalDateTime deletedFrom,     // 삭제일 범위 시작
+    LocalDateTime deletedTo,       // 삭제일 범위 끝
     Boolean includeDeleted,        // 삭제된 상품 포함 여부 (soft delete)
 
     // 상품정책 조건

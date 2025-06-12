@@ -8,6 +8,7 @@ import com.want.company.domain.repository.CompanyRepository;
 import com.want.product.application.product.dto.request.CreateProductRequest;
 import com.want.product.application.product.dto.request.ProductSearchCondition;
 import com.want.product.application.product.dto.response.CreateProductResponse;
+import com.want.product.application.product.dto.response.FlatProductDto;
 import com.want.product.application.product.dto.response.GetProductResponse;
 import com.want.product.application.product.dto.response.GetProductsResponse;
 import com.want.product.domain.entity.category.Category;
@@ -18,9 +19,11 @@ import com.want.product.domain.repository.CategoryRepository;
 import com.want.product.domain.repository.ProductPolicyRepository;
 import com.want.product.domain.repository.ProductQuerydslRepository;
 import com.want.product.domain.repository.ProductRepository;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,10 +106,17 @@ public class ProductServiceImpl implements ProductService {
   @Transactional(readOnly = true)
   @Override
   public PagedResponse<GetProductsResponse> getProducts(ProductSearchCondition condition, Pageable pageable) {
-    Page<GetProductsResponse> productsByCondition = productQuerydslRepository.findProductsByCondition(condition,
+    Page<FlatProductDto> productsByCondition = productQuerydslRepository.findProductsByCondition(condition,
         pageable);
 
-    return PagedResponse.from(productsByCondition);
+    List<GetProductsResponse> content = productsByCondition.getContent().stream()
+        .map(GetProductsResponse::from)
+        .toList();
+
+    PageImpl<GetProductsResponse> getProductsResponses = new PageImpl<>(content, pageable,
+        productsByCondition.getTotalElements());
+
+    return PagedResponse.from(getProductsResponses);
   }
 
 
