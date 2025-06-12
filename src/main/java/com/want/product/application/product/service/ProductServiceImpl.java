@@ -7,10 +7,12 @@ import com.want.company.domain.entity.Company;
 import com.want.company.domain.repository.CompanyRepository;
 import com.want.product.application.product.dto.request.CreateProductRequest;
 import com.want.product.application.product.dto.request.ProductSearchCondition;
+import com.want.product.application.product.dto.request.UpdateProductRequest;
 import com.want.product.application.product.dto.response.CreateProductResponse;
 import com.want.product.application.product.dto.response.FlatProductDto;
 import com.want.product.application.product.dto.response.GetProductResponse;
 import com.want.product.application.product.dto.response.GetProductsResponse;
+import com.want.product.application.product.dto.response.UpdateProductResponse;
 import com.want.product.domain.entity.category.Category;
 import com.want.product.domain.entity.product.Product;
 import com.want.product.domain.entity.product.ProductErrorCode;
@@ -117,6 +119,25 @@ public class ProductServiceImpl implements ProductService {
         productsByCondition.getTotalElements());
 
     return PagedResponse.from(getProductsResponses);
+  }
+
+  @Transactional
+  @Override
+  public UpdateProductResponse updateProduct(CustomUserDetails userDetails,
+                                             UpdateProductRequest request,
+                                             UUID id) {
+    Product byId = findById(id);
+
+    byId.updateName(request.name());
+    byId.updatePrice(request.price());
+    byId.updateQuantity(request.quantity());
+    byId.updateSaleStatus(request.saleStatus());
+    byId.updateDescription(request.description());
+    byId.updateThumbnail(request.thumbnail());
+
+    Product saveProduct = productRepository.save(byId);
+
+    return UpdateProductResponse.from(saveProduct);
   }
 
 
