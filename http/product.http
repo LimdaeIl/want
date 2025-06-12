@@ -109,3 +109,24 @@ Content-Type: application/json
 Authorization: Bearer {{at}}
 
 {}
+
+### 상품 일반 수정
+PATCH http://localhost:{{SERVER_PORT}}/api/v1/products/{{productId}}
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "name": "수정된 상품 이름1",
+  "price": 100000,
+  "quantity": 12,
+  "thumbnail": "update products test.png",
+  "description": "수정된 상품 내용1",
+  "saleStatus": "INACTIVE"
+}
+
+### 상품 소프트 삭제
+DELETE http://localhost:{{SERVER_PORT}}/api/v1/products/{{productId}}
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{}

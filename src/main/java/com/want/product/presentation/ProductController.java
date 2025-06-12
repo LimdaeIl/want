@@ -7,6 +7,7 @@ import com.want.product.application.product.dto.request.CreateProductRequest;
 import com.want.product.application.product.dto.request.ProductSearchCondition;
 import com.want.product.application.product.dto.request.UpdateProductRequest;
 import com.want.product.application.product.dto.response.CreateProductResponse;
+import com.want.product.application.product.dto.response.DeleteProductResponse;
 import com.want.product.application.product.dto.response.GetProductResponse;
 import com.want.product.application.product.dto.response.GetProductsResponse;
 import com.want.product.application.product.dto.response.UpdateProductResponse;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -101,10 +103,28 @@ public class ProductController {
   @PatchMapping("/{id}")
   public ResponseEntity<ApiResponse<UpdateProductResponse>> updateProduct(
       @AuthenticationPrincipal CustomUserDetails userDetails,
-      @RequestBody UpdateProductRequest request,
+      @RequestBody @Valid UpdateProductRequest request,
       @PathVariable UUID id
   ) {
     UpdateProductResponse response = productService.updateProduct(userDetails, request, id);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                ProductSuccessCode.PRODUCT_UPDATED.getCode(),
+                ProductSuccessCode.PRODUCT_UPDATED.getMessage(),
+                response
+            )
+        );
+  }
+
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER')")
+  @DeleteMapping("/{id}")
+  public ResponseEntity<ApiResponse<DeleteProductResponse>> deleteProduct(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable UUID id
+  ) {
+    DeleteProductResponse response = productService.deleteProduct(userDetails, id);
 
     return ResponseEntity
         .status(HttpStatus.OK)
