@@ -4,14 +4,17 @@ import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.common.response.ApiResponse;
 import com.want.order.application.dto.request.CreateOrderRequest;
 import com.want.order.application.dto.response.CreateOrderResponse;
+import com.want.order.application.dto.response.GetOrderResponse;
 import com.want.order.application.service.OrderService;
 import com.want.order.domain.entity.OrderSuccessCode;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,5 +44,25 @@ public class OrderController {
             )
         );
   }
+
+
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER', 'CUSTOMER')")
+  @PostMapping("/{id}")
+  public ResponseEntity<ApiResponse<GetOrderResponse>> getOrder(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable UUID id
+  ) {
+    GetOrderResponse response = orderService.getOrder(userDetails, id);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                OrderSuccessCode.ORDER_GET_SUCCESS.getCode(),
+                OrderSuccessCode.ORDER_GET_SUCCESS.getMessage(),
+                response
+            )
+        );
+  }
+
 
 }

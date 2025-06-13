@@ -5,7 +5,9 @@ import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.order.application.dto.request.CreateOrderRequest;
 import com.want.order.application.dto.request.CreateOrderRequest.OrderProductRequest;
 import com.want.order.application.dto.response.CreateOrderResponse;
+import com.want.order.application.dto.response.GetOrderResponse;
 import com.want.order.domain.entity.Order;
+import com.want.order.domain.entity.OrderErrorCode;
 import com.want.order.domain.entity.OrderProduct;
 import com.want.order.domain.entity.Status;
 import com.want.order.domain.repository.OrderRepository;
@@ -17,6 +19,7 @@ import com.want.user.domain.user.User;
 import com.want.user.domain.user.UserErrorCode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +65,10 @@ public class OrderServiceImpl implements OrderService {
     return order;
   }
 
+  private Order findOrderById(UUID id) {
+    return orderRepository.findById(id)
+        .orElseThrow(() -> new CustomException(OrderErrorCode.ORDER_NOT_FOUND));
+  }
 
   @Transactional
   @Override
@@ -79,5 +86,14 @@ public class OrderServiceImpl implements OrderService {
     Order savedOrder = orderRepository.save(order);
 
     return CreateOrderResponse.from(savedOrder);
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public GetOrderResponse getOrder(CustomUserDetails userDetails, UUID id) {
+    Order order = orderRepository.findWithUserAndProductsById(id)
+        .orElseThrow(() -> new CustomException(OrderErrorCode.ORDER_NOT_FOUND));
+
+    return GetOrderResponse.from(order);
   }
 }
