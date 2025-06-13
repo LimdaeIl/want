@@ -4,6 +4,7 @@ package com.want.product.domain.entity.product;
 import com.want.common.audit.BaseEntity;
 import com.want.common.exception.CustomException;
 import com.want.company.domain.entity.Company;
+import com.want.order.domain.entity.OrderProduct;
 import com.want.product.domain.entity.category.Category;
 import com.want.product.domain.entity.productPolicy.ProductPolicy;
 import jakarta.persistence.Column;
@@ -16,9 +17,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -45,6 +50,10 @@ public class Product extends BaseEntity {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "product_policy_id")
   private ProductPolicy productPolicy;
+
+  @Builder.Default
+  @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+  private List<OrderProduct> orderProducts = new ArrayList<>();
 
   @Column(name = "name", nullable = false)
   private String name;
@@ -113,5 +122,16 @@ public class Product extends BaseEntity {
 
   public void updateThumbnail(String thumbnail) {
     this.thumbnail = thumbnail;
+  }
+
+  public void decreaseStock(int quantity) {
+    if (this.quantity < quantity) {
+      throw new CustomException(ProductErrorCode.PRODUCT_QUANTITY_INVALID);
+    }
+    this.quantity -= quantity;
+  }
+
+  public void increaseStock(int quantity) {
+    this.quantity += quantity;
   }
 }
