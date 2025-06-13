@@ -115,7 +115,16 @@ Authorization: Bearer {{at}}
     client.global.set("orderId", response.body.data.orderId);
 %}
 
-### 상품 단 건 조회
-POST http://localhost:{{SERVER_PORT}}/api/v1/orders/{{orderId}}
+### 주문 단 건 조회
+GET http://localhost:{{SERVER_PORT}}/api/v1/orders/{{orderId}}
 Content-Type: application/json
 Authorization: Bearer {{at}}
+
+{}
+
+### 주문 동적 조회
+GET http://localhost:{{SERVER_PORT}}/api/v1/orders
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{}
