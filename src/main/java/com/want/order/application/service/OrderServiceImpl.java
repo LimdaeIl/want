@@ -1,15 +1,19 @@
 package com.want.order.application.service;
 
+import com.want.common.config.PagedResponse;
 import com.want.common.exception.CustomException;
 import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.order.application.dto.request.CreateOrderRequest;
 import com.want.order.application.dto.request.CreateOrderRequest.OrderProductRequest;
+import com.want.order.application.dto.request.OrderSearchCondition;
 import com.want.order.application.dto.response.CreateOrderResponse;
 import com.want.order.application.dto.response.GetOrderResponse;
+import com.want.order.application.dto.response.GetOrdersResponse;
 import com.want.order.domain.entity.Order;
 import com.want.order.domain.entity.OrderErrorCode;
 import com.want.order.domain.entity.OrderProduct;
 import com.want.order.domain.entity.Status;
+import com.want.order.domain.repository.OrderQuerydslRepository;
 import com.want.order.domain.repository.OrderRepository;
 import com.want.product.domain.entity.product.Product;
 import com.want.product.domain.entity.product.ProductErrorCode;
@@ -21,6 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +37,7 @@ public class OrderServiceImpl implements OrderService {
   private final OrderRepository orderRepository;
   private final UserRepository userRepository;
   private final ProductRepository productRepository;
+  private final OrderQuerydslRepository orderQuerydslRepository;
 
   private User findUserById(Long id) {
     return userRepository.findUserById(id)
@@ -95,5 +102,17 @@ public class OrderServiceImpl implements OrderService {
         .orElseThrow(() -> new CustomException(OrderErrorCode.ORDER_NOT_FOUND));
 
     return GetOrderResponse.from(order);
+  }
+
+  @Transactional
+  @Override
+  public PagedResponse<GetOrdersResponse> getOrders(
+      CustomUserDetails userDetails,
+      OrderSearchCondition condition,
+      Pageable pageable) {
+
+    Page<GetOrdersResponse> ordersByCondition = orderQuerydslRepository.findOrdersByCondition(condition, pageable);
+
+    return PagedResponse.from(ordersByCondition);
   }
 }
