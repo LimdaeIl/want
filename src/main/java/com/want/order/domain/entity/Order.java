@@ -2,6 +2,7 @@ package com.want.order.domain.entity;
 
 import com.want.common.audit.BaseEntity;
 import com.want.user.domain.user.User;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -12,10 +13,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -33,9 +38,13 @@ public class Order extends BaseEntity {
   @Column(name = "id", nullable = false, updatable = false, unique = true)
   private UUID id;
 
-  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
   private User user;
+
+  @Builder.Default
+  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<OrderProduct> orderProducts = new ArrayList<>();
 
   @Enumerated(EnumType.STRING)
   @Column(name = "status", nullable = false)
@@ -49,4 +58,9 @@ public class Order extends BaseEntity {
 
   @Column(name = "cancelled_by")
   private Long cancelledBy;
+
+  public void addOrderProduct(OrderProduct orderProduct) {
+    orderProducts.add(orderProduct);
+    orderProduct.assignOrder(this);
+  }
 }
