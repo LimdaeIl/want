@@ -27,6 +27,7 @@ public enum OrderErrorCode implements ErrorCode {
   ORDER_ALREADY_CANCELED(HttpStatus.BAD_REQUEST.value(), "이미 취소된 주문입니다.", HttpStatus.BAD_REQUEST),
   ORDER_UPDATE_FORBIDDEN(HttpStatus.FORBIDDEN.value(), "해당 주문은 수정할 수 없습니다.", HttpStatus.FORBIDDEN),
   ORDER_STATUS_INVALID(HttpStatus.BAD_REQUEST.value(), "주문 상태가 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
+  ORDER_DELETE_FORBIDDEN(HttpStatus.BAD_REQUEST.value(), "자신의 주문 내역만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST),
 
   // ────────────── [결제 관련] ──────────────
   PAYMENT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR.value(), "결제 처리에 실패했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),

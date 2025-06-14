@@ -141,7 +141,7 @@ public class OrderServiceImpl implements OrderService {
     Order orderById = findOrderById(id);
 
     if (userDetails.role() != Role.ROLE_ADMIN && !userDetails.id().equals(orderById.getUser().getId())) {
-      throw new CustomException(OrderErrorCode.ORDER_UPDATE_FORBIDDEN);
+      throw new CustomException(OrderErrorCode.ORDER_DELETE_FORBIDDEN);
     }
 
     orderById.markDeleted(userDetails.id());
