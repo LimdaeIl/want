@@ -131,8 +131,8 @@ public class OrderController {
     return ResponseEntity
         .status(HttpStatus.OK)
         .body(new ApiResponse<>(
-                OrderSuccessCode.ORDER_STATUS_UPDATE.getCode(),
-                OrderSuccessCode.ORDER_STATUS_UPDATE.getMessage(),
+                OrderSuccessCode.ORDER_DELETE_SUCCESS.getCode(),
+                OrderSuccessCode.ORDER_DELETE_SUCCESS.getMessage(),
                 response
             )
         );
