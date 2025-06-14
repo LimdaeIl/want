@@ -1,6 +1,6 @@
 package com.want.order.domain.entity;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.want.common.response.SuccessCode;

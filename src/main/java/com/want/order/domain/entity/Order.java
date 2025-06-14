@@ -1,6 +1,7 @@
 package com.want.order.domain.entity;
 
 import com.want.common.audit.BaseEntity;
+import com.want.common.exception.CustomException;
 import com.want.user.domain.user.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -64,8 +65,16 @@ public class Order extends BaseEntity {
     orderProduct.assignOrder(this);
   }
 
-  public void updateStatus(Status status) {
-    this.status = status;
+  public void updateStatus(Status newStatus) {
+    if (this.status == null) {
+      throw new CustomException(OrderErrorCode.ORDER_STATUS_INVALID);
+    }
+
+    if (this.status == newStatus) {
+      return;
+    }
+
+    this.status = newStatus;
   }
 
 }
