@@ -8,6 +8,7 @@ import com.want.order.application.dto.request.CreateOrderRequest.OrderProductReq
 import com.want.order.application.dto.request.OrderSearchCondition;
 import com.want.order.application.dto.request.UpdateOrderStatusRequest;
 import com.want.order.application.dto.response.CreateOrderResponse;
+import com.want.order.application.dto.response.DeleteOrderResponse;
 import com.want.order.application.dto.response.GetOrderResponse;
 import com.want.order.application.dto.response.GetOrdersResponse;
 import com.want.order.application.dto.response.UpdateOrderStatusResponse;
@@ -132,5 +133,19 @@ public class OrderServiceImpl implements OrderService {
     orderById.updateStatus(request.newStatus());
 
     return UpdateOrderStatusResponse.from(orderById);
+  }
+
+  @Transactional
+  @Override
+  public DeleteOrderResponse deleteOrder(CustomUserDetails userDetails, UUID id) {
+    Order orderById = findOrderById(id);
+
+    if (userDetails.role() != Role.ROLE_ADMIN && !userDetails.id().equals(orderById.getUser().getId())) {
+      throw new CustomException(OrderErrorCode.ORDER_DELETE_FORBIDDEN);
+    }
+
+    orderById.markDeleted(userDetails.id());
+
+    return DeleteOrderResponse.from(orderById);
   }
 }

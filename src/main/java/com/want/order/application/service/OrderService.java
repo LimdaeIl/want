@@ -6,6 +6,7 @@ import com.want.order.application.dto.request.CreateOrderRequest;
 import com.want.order.application.dto.request.OrderSearchCondition;
 import com.want.order.application.dto.request.UpdateOrderStatusRequest;
 import com.want.order.application.dto.response.CreateOrderResponse;
+import com.want.order.application.dto.response.DeleteOrderResponse;
 import com.want.order.application.dto.response.GetOrderResponse;
 import com.want.order.application.dto.response.GetOrdersResponse;
 import com.want.order.application.dto.response.UpdateOrderStatusResponse;
@@ -21,4 +22,6 @@ public interface OrderService {
                                              Pageable pageable);
 
   UpdateOrderStatusResponse updateOrderStatus(CustomUserDetails userDetails, UpdateOrderStatusRequest request, UUID id);
+
+  DeleteOrderResponse deleteOrder(CustomUserDetails userDetails, UUID id);
 }

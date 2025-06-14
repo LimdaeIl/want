@@ -23,7 +23,10 @@ public enum OrderSuccessCode implements SuccessCode {
   ORDER_CANCEL_SUCCESS(0, "주문이 성공적으로 취소되었습니다.", OK),
 
   // ────────────── [주문 수정 관련] ──────────────
-  ORDER_STATUS_UPDATE(0, "주문 상태 수정에 성공했습니다.", OK);
+  ORDER_STATUS_UPDATE(0, "주문 상태 수정에 성공했습니다.", OK),
+
+  // ────────────── [주문 삭제 관련] ──────────────
+  ORDER_DELETE_SUCCESS(0, "주문 삭제에 성공했습니다.", OK);
 
   private final Integer code;
   private final String message;

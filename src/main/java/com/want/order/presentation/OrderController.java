@@ -7,6 +7,7 @@ import com.want.order.application.dto.request.CreateOrderRequest;
 import com.want.order.application.dto.request.OrderSearchCondition;
 import com.want.order.application.dto.request.UpdateOrderStatusRequest;
 import com.want.order.application.dto.response.CreateOrderResponse;
+import com.want.order.application.dto.response.DeleteOrderResponse;
 import com.want.order.application.dto.response.GetOrderResponse;
 import com.want.order.application.dto.response.GetOrdersResponse;
 import com.want.order.application.dto.response.UpdateOrderStatusResponse;
@@ -24,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -113,6 +115,24 @@ public class OrderController {
         .body(new ApiResponse<>(
                 OrderSuccessCode.ORDER_STATUS_UPDATE.getCode(),
                 OrderSuccessCode.ORDER_STATUS_UPDATE.getMessage(),
+                response
+            )
+        );
+  }
+
+  @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'OWNER', 'CUSTOMER')")
+  @DeleteMapping("/{id}")
+  public ResponseEntity<ApiResponse<DeleteOrderResponse>> deleteOrder(
+      @AuthenticationPrincipal CustomUserDetails userDetails,
+      @PathVariable UUID id) {
+
+    DeleteOrderResponse response = orderService.deleteOrder(userDetails, id);
+
+    return ResponseEntity
+        .status(HttpStatus.OK)
+        .body(new ApiResponse<>(
+                OrderSuccessCode.ORDER_DELETE_SUCCESS.getCode(),
+                OrderSuccessCode.ORDER_DELETE_SUCCESS.getMessage(),
                 response
             )
         );
