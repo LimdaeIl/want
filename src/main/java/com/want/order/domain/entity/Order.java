@@ -63,4 +63,9 @@ public class Order extends BaseEntity {
     orderProducts.add(orderProduct);
     orderProduct.assignOrder(this);
   }
+
+  public void updateStatus(Status status) {
+    this.status = status;
+  }
+
 }

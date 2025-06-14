@@ -6,9 +6,11 @@ import com.want.common.infrastructure.security.CustomUserDetails;
 import com.want.order.application.dto.request.CreateOrderRequest;
 import com.want.order.application.dto.request.CreateOrderRequest.OrderProductRequest;
 import com.want.order.application.dto.request.OrderSearchCondition;
+import com.want.order.application.dto.request.UpdateOrderStatusRequest;
 import com.want.order.application.dto.response.CreateOrderResponse;
 import com.want.order.application.dto.response.GetOrderResponse;
 import com.want.order.application.dto.response.GetOrdersResponse;
+import com.want.order.application.dto.response.UpdateOrderStatusResponse;
 import com.want.order.domain.entity.Order;
 import com.want.order.domain.entity.OrderErrorCode;
 import com.want.order.domain.entity.OrderProduct;
@@ -19,6 +21,7 @@ import com.want.product.domain.entity.product.Product;
 import com.want.product.domain.entity.product.ProductErrorCode;
 import com.want.product.domain.repository.ProductRepository;
 import com.want.user.domain.repository.UserRepository;
+import com.want.user.domain.user.Role;
 import com.want.user.domain.user.User;
 import com.want.user.domain.user.UserErrorCode;
 import java.util.ArrayList;
@@ -114,5 +117,20 @@ public class OrderServiceImpl implements OrderService {
     Page<GetOrdersResponse> ordersByCondition = orderQuerydslRepository.findOrdersByCondition(condition, pageable);
 
     return PagedResponse.from(ordersByCondition);
+  }
+
+  @Transactional
+  @Override
+  public UpdateOrderStatusResponse updateOrderStatus(CustomUserDetails userDetails, UpdateOrderStatusRequest request,
+                                                     UUID id) {
+    Order orderById = findOrderById(id);
+
+    if (userDetails.role() != Role.ROLE_ADMIN && !userDetails.id().equals(orderById.getUser().getId())) {
+      throw new CustomException(OrderErrorCode.ORDER_UPDATE_FORBIDDEN);
+    }
+
+    orderById.updateStatus(request.newStatus());
+
+    return UpdateOrderStatusResponse.from(orderById);
   }
 }
