@@ -76,5 +76,4 @@ public class Order extends BaseEntity {
 
     this.status = newStatus;
   }
-
 }
