@@ -137,3 +137,10 @@ Authorization: Bearer {{at}}
 {
   "newStatus": "SHIPPED"
 }
+
+### 주문 소프트 삭제
+DELETE http://localhost:{{SERVER_PORT}}/api/v1/orders/{{orderId}}
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{}
