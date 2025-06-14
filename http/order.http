@@ -128,3 +128,12 @@ Content-Type: application/json
 Authorization: Bearer {{at}}
 
 {}
+
+### 주문 상태 수정
+PATCH http://localhost:{{SERVER_PORT}}/api/v1/orders/{{orderId}}
+Content-Type: application/json
+Authorization: Bearer {{at}}
+
+{
+  "newStatus": "SHIPPED"
+}
